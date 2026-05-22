@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moodmold · 民宿端 · 今日提醒</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../tokens.css" />
+  <link rel="stylesheet" href="../tokens-host.css" />
+
+  <style>
+    /* ============================================================
+       Desk + iPhone (matches owner-side review surface)
+       ============================================================ */
+    html, body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(232,239,235,0.45) 0%, transparent 55%),
+        var(--color-primary-bg);
+      min-height: 100vh;
+    }
+    body.host {
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 24px;
+    }
+    .desk { display: flex; gap: 64px; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+    /* Desk caption uses serif (this is the design-review chrome, not the H5) */
+    .desk-meta { max-width: 280px; font-family: "Noto Sans SC", sans-serif; }
+    .desk-meta .edition {
+      font-family: "Noto Serif SC", serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    .desk-meta h1 {
+      font-family: "Noto Serif SC", serif;
+      font-size: 28px; font-weight: 600;
+      line-height: 1.35; margin: 0 0 16px;
+    }
+    .desk-meta p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin: 0 0 12px; }
+    .desk-meta .role {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px;
+      background: var(--color-accent-soft);
+      border-radius: 999px;
+      color: var(--color-accent-primary);
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .desk-meta .spec {
+      margin-top: 24px; padding-top: 18px;
+      border-top: 1px solid var(--color-border-light);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px; color: var(--color-text-tertiary);
+      letter-spacing: 0.06em; line-height: 1.8;
+    }
+
+    .iphone {
+      width: 393px; height: 852px;
+      background: #1a1a1a; border-radius: 54px; padding: 11px;
+      box-shadow: var(--shadow-lift), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative; flex-shrink: 0;
+    }
+    .iphone::after { content: ""; position: absolute; left: -2px; top: 180px; width: 3px; height: 60px; background: #2a2a2a; border-radius: 2px; }
+    .iphone .screen {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      border-radius: 44px; overflow: hidden; position: relative;
+    }
+    .iphone .notch {
+      position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px; background: #1a1a1a; border-radius: 20px; z-index: 50;
+    }
+    .iphone .statusbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 54px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 28px 0;
+      font-family: "Inter", "Noto Sans SC", sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: var(--color-text-primary); z-index: 40; pointer-events: none;
+    }
+    .iphone .statusbar .icons { display: inline-flex; gap: 5px; align-items: center; }
+
+    /* ============================================================
+       Page transition (matches owner side)
+       ============================================================ */
+    .screen-content {
+      position: absolute; inset: 0;
+      animation: pageEnter 400ms ease-out both;
+    }
+    @keyframes pageEnter { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+    .screen-content.is-leaving-back    { animation: pageLeaveBack    200ms ease-out forwards; }
+    .screen-content.is-leaving-forward { animation: pageLeaveForward 200ms ease-out forwards; }
+    @keyframes pageLeaveForward { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-8px); } }
+    @keyframes pageLeaveBack    { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(8px); } }
+
+    /* ============================================================
+       Scroll surface — note bottom CTA height ~96px
+       ============================================================ */
+    .page-scroll {
+      width: 100%; height: 100%;
+      overflow-y: auto;
+      -ms-overflow-style: none; scrollbar-width: none;
+      padding-top: 54px;
+      padding-bottom: 132px;
+      background: var(--color-primary-bg);
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       Welcome strip · 120px · #E8EFEB
+       ============================================================ */
+    .welcome {
+      height: 120px;
+      padding: 24px;
+      background: var(--color-accent-soft);
+      display: grid;
+      grid-template-columns: 1fr 64px;
+      align-items: center;
+      gap: 16px;
+    }
+    .welcome .greet h1 {
+      margin: 0;
+      font-family: var(--font-host-base);
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--color-text-primary);
+      letter-spacing: 0.01em;
+    }
+    .welcome .greet .day {
+      margin-top: 8px;
+      font-family: var(--font-host-base);
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.4;
+    }
+    .welcome .greet .day .weather {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+      color: var(--color-accent-primary);
+      font-weight: 500;
+    }
+    .welcome .avatar-host {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 10px rgba(62,58,54,0.12);
+      background:
+        linear-gradient(140deg, #C8A77F 0%, #8B6F47 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-family: var(--font-host-base);
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       Summary card · 100px
+       ============================================================ */
+    .summary {
+      margin: 24px 24px 0;
+      min-height: 100px;
+      background: var(--color-card-bg);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-base);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .summary .left { flex: 1; min-width: 0; }
+    .summary .left .lead {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+    }
+    .summary .left .lead .num {
+      color: var(--color-accent-primary);
+      font-weight: 700;
+      margin: 0 1px;
+    }
+    .summary .left .guests {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+      display: flex; flex-direction: column;
+      gap: 4px;
+    }
+    .summary .left .guests li {
+      display: flex; align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+    .summary .left .guests .nm {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .summary .left .guests .day {
+      color: var(--color-accent-wood);
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+    }
+    .summary .left .guests .day::before {
+      content: "·";
+      margin-right: 6px;
+      color: var(--color-accent-wood);
+      opacity: 0.55;
+    }
+    .summary .ratio {
+      flex-shrink: 0;
+      text-align: center;
+      padding-left: 14px;
+      border-left: 1px solid var(--color-border-light);
+      min-width: 78px;
+    }
+    .summary .ratio .num {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-accent-wood);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .summary .ratio .num .total {
+      color: var(--hcolor-text-tertiary);
+      font-weight: 500;
+    }
+    .summary .ratio .lbl {
+      margin-top: 6px;
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       Today schedule
+       ============================================================ */
+    .schedule {
+      margin: 32px 24px 0;
+    }
+    .schedule .h-section {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin: 0 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .schedule .h-section .count {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--hcolor-text-secondary);
+      margin-left: 8px;
+    }
+    .schedule-list {
+      display: flex; flex-direction: column;
+      gap: 12px;
+    }
+
+    .task-card {
+      min-height: 96px;
+      padding: 16px 16px 16px 16px;
+      border-radius: var(--r-card);
+      background: var(--color-card-bg);
+      box-shadow: var(--shadow-base);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease;
+      position: relative;
+      border: 1.5px solid transparent;
+    }
+    .task-card:active {
+      transform: scale(0.995);
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* Icon disc */
+    .task-card .icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .task-card .icon.done    { background: var(--color-accent-primary); }
+    .task-card .icon.camera  { background: var(--color-shimmer-bg); color: var(--color-accent-wood); }
+    .task-card .icon.meal    { background: var(--color-accent-cream); color: var(--color-accent-wood); }
+    .task-card .icon.checkin { background: var(--color-accent-cream); color: var(--color-accent-wood); }
+
+    .task-card .body {
+      flex: 1; min-width: 0;
+    }
+    .task-card .body .time {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+    .task-card .body .t {
+      margin-top: 2px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+    .task-card .body .who {
+      margin-top: 4px;
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.4;
+    }
+    .task-card .body .who .important {
+      color: var(--color-accent-shimmer);
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    /* Status text on right */
+    .task-card .status {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+      white-space: nowrap;
+    }
+    .task-card .status.is-done {
+      color: var(--color-accent-primary);
+    }
+    .task-card .status.is-pending {
+      color: var(--color-accent-wood);
+      font-size: 16px;
+    }
+    .task-card .status svg { width: 16px; height: 16px; }
+
+    /* Completed-task variant — soft green background */
+    .task-card.is-done {
+      background: var(--color-accent-soft);
+      box-shadow: none;
+    }
+    .task-card.is-done .body .t {
+      color: var(--hcolor-text-secondary);
+      text-decoration: line-through;
+      text-decoration-color: rgba(107,142,127,0.5);
+      text-decoration-thickness: 1.5px;
+      font-weight: 500;
+    }
+
+    /* Pending-emphasis variant — white + tiny ring */
+    .task-card.is-pending {
+      border-color: rgba(139,111,71,0.16);
+    }
+    .task-card.is-important {
+      border-color: var(--color-accent-shimmer);
+      background:
+        linear-gradient(135deg, #FFFBF5 0%, #FFFFFF 100%);
+      box-shadow:
+        0 2px 16px rgba(196, 145, 92, 0.16);
+    }
+
+    /* ============================================================
+       Tip card · 110px · cream bg
+       ============================================================ */
+    .tip {
+      margin: 32px 24px 0;
+      min-height: 110px;
+      padding: 20px;
+      background: var(--color-shimmer-bg);
+      border-radius: var(--r-card);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .tip .bulb {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--color-accent-wood);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(139,111,71,0.22);
+    }
+    .tip .body { flex: 1; min-width: 0; }
+    .tip .body .tt {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+    }
+    .tip .body .ms {
+      margin-top: 8px;
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.6;
+    }
+    .tip .body .ms .em {
+      color: var(--color-accent-wood);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       CTA fixed
+       ============================================================ */
+    .cta {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 16px 24px 28px;
+      background: var(--color-primary-bg);
+      z-index: 25;
+    }
+    .cta::before {
+      content: ""; position: absolute;
+      left: 0; right: 0; top: -24px; height: 24px;
+      background: linear-gradient(180deg, rgba(245,241,234,0) 0%, var(--color-primary-bg) 100%);
+      pointer-events: none;
+    }
+    .cta .btn {
+      width: 100%;
+      padding: 0 20px;
+      white-space: nowrap;
+    }
+    .cta .btn .count {
+      font-weight: 500;
+      font-size: 16px;
+      margin-left: 4px;
+      opacity: 0.85;
+    }
+
+    /* ============================================================
+       Toast
+       ============================================================ */
+    .toast {
+      position: absolute;
+      left: 50%; top: 110px;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(62, 58, 54, 0.92);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-host-base);
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 70;
+      box-shadow: var(--shadow-lift);
+    }
+    .toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       Mobile fallback
+       ============================================================ */
+    @media (max-width: 880px) {
+      body.host { padding: 0; align-items: stretch; }
+      .desk { gap: 0; }
+      .desk-meta { display: none; }
+      .iphone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
+      .iphone::after { display: none; }
+      .iphone .screen { border-radius: 0; }
+      .iphone .notch { display: none; }
+      .iphone .statusbar { display: none; }
+      .page-scroll { padding-top: 0; }
+    }
+  </style>
+</head>
+<body class="host">
+  <div class="desk">
+
+    <aside class="desk-meta">
+      <div class="edition">Host · Page 09</div>
+      <span class="role">民宿端 · Host UI</span>
+      <h1>「王老板,<br/>今天有三件事要做。」</h1>
+      <p>民宿主扫码进入的工作主页。字号 +20%,按钮 64px,无衬线,无装饰细线 — 让 45-65 岁的村里民宿主看着不累。</p>
+      <p>点击主 CTA → Page 10 任务列表;点击任务卡 → 对应操作页(拍照 → Page 11)。</p>
+      <div class="spec">
+        iPhone 15 · 393 × 852<br/>
+        HOST TOKENS · v0.1<br/>
+        2026 · 05 · 25
+      </div>
+    </aside>
+
+    <div class="iphone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="18" height="11" viewBox="0 0 18 11"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5C5 2.5 2.3 3.7.5 5.5L2 7C3.6 5.4 5.7 4.5 8 4.5s4.4.9 6 2.5l1.5-1.5C13.7 3.7 11 2.5 8 2.5zM8 6.5c-1.4 0-2.7.5-3.7 1.5L8 11l3.7-3c-1-1-2.3-1.5-3.7-1.5z" fill="currentColor"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12">
+              <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/>
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/>
+              <rect x="23" y="4" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="toast" id="toast"></div>
+
+        <div class="screen-content" id="screen-content" data-screen-label="Host 09 Today">
+          <div class="page-scroll">
+
+            <!-- Welcome strip -->
+            <section class="welcome">
+              <div class="greet">
+                <h1>你好,王老板</h1>
+                <div class="day">
+                  2026 年 5 月 25 日 星期六
+                  <span class="weather">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M17 18a5 5 0 0 0 0-10c-.4 0-.8 0-1.1.1A7 7 0 0 0 4 12c0 1.5.5 3 1.5 4"/>
+                      <path d="M16 18H6"/>
+                    </svg>
+                    多云
+                  </span>
+                </div>
+              </div>
+              <div class="avatar-host" title="王老板">王</div>
+            </section>
+
+            <!-- Summary card -->
+            <section class="summary">
+              <div class="left">
+                <div class="lead">今天有 <span class="num">2</span> 位客人</div>
+                <ul class="guests">
+                  <li><span class="nm">豆豆</span><span class="day">Day 3</span></li>
+                  <li><span class="nm">小花</span><span class="day">Day 1</span></li>
+                </ul>
+              </div>
+              <div class="ratio">
+                <div class="num">0<span class="total">/3</span></div>
+                <div class="lbl">已完成任务</div>
+              </div>
+            </section>
+
+            <!-- Today schedule -->
+            <section class="schedule">
+              <h2 class="h-section">今日时间表<span class="count">共 4 项</span></h2>
+
+              <div class="schedule-list">
+
+                <!-- Task 1 · done -->
+                <article class="task-card is-done" data-task="breakfast">
+                  <div class="icon done" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12.5l4.5 4.5L19 7.5"/>
+                    </svg>
+                  </div>
+                  <div class="body">
+                    <div class="time">上午 09:00</div>
+                    <div class="t">喂早餐</div>
+                    <div class="who">豆豆、小花</div>
+                  </div>
+                  <div class="status is-done">已完成</div>
+                </article>
+
+                <!-- Task 2 · pending · highlighted (closest in time) -->
+                <article class="task-card is-pending is-important" data-task="photo-morning">
+                  <div class="icon camera" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                  </div>
+                  <div class="body">
+                    <div class="time">上午 10:00</div>
+                    <div class="t">拍照打卡</div>
+                    <div class="who">豆豆 - 在院子里</div>
+                  </div>
+                  <div class="status is-pending">
+                    去完成
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                  </div>
+                </article>
+
+                <!-- Task 3 · pending -->
+                <article class="task-card is-pending" data-task="lunch">
+                  <div class="icon meal" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 11h14"/>
+                      <path d="M5 11a7 7 0 0 1 14 0"/>
+                      <path d="M3 15h18l-2 5H5l-2-5z"/>
+                      <path d="M12 8V4"/>
+                    </svg>
+                  </div>
+                  <div class="body">
+                    <div class="time">下午 14:00</div>
+                    <div class="t">喂午餐</div>
+                    <div class="who">豆豆、小花</div>
+                  </div>
+                  <div class="status is-pending">
+                    去完成
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                  </div>
+                </article>
+
+                <!-- Task 4 · pending · highlighted (重点) -->
+                <article class="task-card is-pending is-important" data-task="photo-evening">
+                  <div class="icon checkin" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                      <path d="M11 14.2l1.4 1.4 2.6-2.6" stroke-width="1.6"/>
+                    </svg>
+                  </div>
+                  <div class="body">
+                    <div class="time">下午 17:00</div>
+                    <div class="t">拍照 + 状态提交</div>
+                    <div class="who">豆豆、小花<span class="important">重点!</span></div>
+                  </div>
+                  <div class="status is-pending">
+                    去完成
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                  </div>
+                </article>
+
+              </div>
+            </section>
+
+            <!-- Tip card -->
+            <section class="tip">
+              <div class="bulb" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18h6"/>
+                  <path d="M10 22h4"/>
+                  <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.1 1 1.8V18h6v-1.5c0-.7.4-1.3 1-1.8A7 7 0 0 0 12 2z"/>
+                </svg>
+              </div>
+              <div class="body">
+                <div class="tt">今日小提示</div>
+                <div class="ms">
+                  今天<span class="em">有福</span>和<span class="em">豆豆</span>熟悉了,<br/>
+                  记得拍一张她们一起的照片!
+                </div>
+              </div>
+            </section>
+
+          </div><!-- /page-scroll -->
+
+          <!-- CTA -->
+          <div class="cta">
+            <button class="btn btn--primary" id="cta-view">
+              <span>查看今日宠物</span><span class="count">(2 只)</span>
+            </button>
+          </div>
+
+        </div><!-- /screen-content -->
+
+      </div><!-- /screen -->
+    </div><!-- /iphone -->
+  </div><!-- /desk -->
+
+  <script>
+    (function () {
+      const sc       = document.getElementById('screen-content');
+      const toast    = document.getElementById('toast');
+      const cta      = document.getElementById('cta-view');
+      const tasks    = document.querySelectorAll('.task-card');
+
+      let toastTimer;
+      function showToast(msg, ms) {
+        toast.textContent = msg;
+        toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('is-visible'), ms || 1600);
+      }
+
+      // CTA → Host Page 10 (任务列表)
+      cta.addEventListener('click', () => {
+        sc.classList.add('is-leaving-forward');
+        setTimeout(() => { window.location.href = 'Host 10 - Pets Today.html'; }, 200);
+      });
+
+      // Tap a task card → corresponding action page
+      tasks.forEach(card => {
+        card.addEventListener('click', () => {
+          if (card.classList.contains('is-done')) {
+            showToast('这一项今天已完成');
+            return;
+          }
+          const t = card.dataset.task;
+          const isPhoto = t === 'photo-morning' || t === 'photo-evening';
+          if (isPhoto) {
+            sc.classList.add('is-leaving-forward');
+            setTimeout(() => { window.location.href = 'Host 11 - Checkin.html'; }, 200);
+          } else {
+            sc.classList.add('is-leaving-forward');
+            setTimeout(() => { window.location.href = 'Host 10 - Pets Today.html'; }, 200);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

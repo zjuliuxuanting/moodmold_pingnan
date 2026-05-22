@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moodmold · 民宿端 · 今日宠物</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../tokens.css" />
+  <link rel="stylesheet" href="../tokens-host.css" />
+
+  <style>
+    /* ============================================================
+       Desk + iPhone (shared host chrome)
+       ============================================================ */
+    html, body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(232,239,235,0.45) 0%, transparent 55%),
+        var(--color-primary-bg);
+      min-height: 100vh;
+    }
+    body.host {
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 24px;
+    }
+    .desk { display: flex; gap: 64px; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+    .desk-meta { max-width: 280px; font-family: "Noto Sans SC", sans-serif; }
+    .desk-meta .edition {
+      font-family: "Noto Serif SC", serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    .desk-meta h1 {
+      font-family: "Noto Serif SC", serif;
+      font-size: 28px; font-weight: 600;
+      line-height: 1.35; margin: 0 0 16px;
+    }
+    .desk-meta p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin: 0 0 12px; }
+    .desk-meta .role {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px;
+      background: var(--color-accent-soft);
+      border-radius: 999px;
+      color: var(--color-accent-primary);
+      font-weight: 500; font-size: 13px;
+      letter-spacing: 0.04em; margin-bottom: 12px;
+    }
+    .desk-meta .spec {
+      margin-top: 24px; padding-top: 18px;
+      border-top: 1px solid var(--color-border-light);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px; color: var(--color-text-tertiary);
+      letter-spacing: 0.06em; line-height: 1.8;
+    }
+
+    .iphone {
+      width: 393px; height: 852px;
+      background: #1a1a1a; border-radius: 54px; padding: 11px;
+      box-shadow: var(--shadow-lift), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative; flex-shrink: 0;
+    }
+    .iphone::after { content: ""; position: absolute; left: -2px; top: 180px; width: 3px; height: 60px; background: #2a2a2a; border-radius: 2px; }
+    .iphone .screen {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      border-radius: 44px; overflow: hidden; position: relative;
+    }
+    .iphone .notch {
+      position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px; background: #1a1a1a; border-radius: 20px; z-index: 50;
+    }
+    .iphone .statusbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 54px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 28px 0;
+      font-family: "Inter", "Noto Sans SC", sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: var(--color-text-primary); z-index: 40; pointer-events: none;
+    }
+    .iphone .statusbar .icons { display: inline-flex; gap: 5px; align-items: center; }
+
+    /* ============================================================
+       Page transition
+       ============================================================ */
+    .screen-content {
+      position: absolute; inset: 0;
+      animation: pageEnter 400ms ease-out both;
+    }
+    @keyframes pageEnter { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+    .screen-content.is-leaving-back    { animation: pageLeaveBack    200ms ease-out forwards; }
+    .screen-content.is-leaving-forward { animation: pageLeaveForward 200ms ease-out forwards; }
+    @keyframes pageLeaveForward { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-8px); } }
+    @keyframes pageLeaveBack    { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(8px); } }
+
+    /* ============================================================
+       Scroll surface
+       ============================================================ */
+    .page-scroll {
+      width: 100%; height: 100%;
+      overflow-y: auto;
+      -ms-overflow-style: none; scrollbar-width: none;
+      padding-top: 54px;
+      padding-bottom: 32px;
+      background: var(--color-primary-bg);
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       Top nav · 64px tall (host bigger hit area)
+       ============================================================ */
+    .topnav {
+      height: 64px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 48px 1fr 60px;
+      align-items: center;
+      gap: 8px;
+    }
+    .topnav .iconbtn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-primary);
+      transition: background-color .15s ease;
+    }
+    .topnav .iconbtn:hover { background: rgba(62,58,54,0.06); }
+    .topnav .title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+    }
+    .topnav .right-link {
+      justify-self: end;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-accent-primary);
+      cursor: pointer;
+      padding: 8px 6px;
+      display: inline-flex; align-items: center; gap: 2px;
+      transition: color .15s ease;
+    }
+    .topnav .right-link:hover { color: #5d8071; }
+
+    /* ============================================================
+       Stats row
+       ============================================================ */
+    .stats {
+      padding: 16px 24px 0;
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.5;
+    }
+    .stats .em {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+    .stats .sep {
+      margin: 0 6px;
+      color: var(--color-accent-wood);
+      opacity: 0.55;
+    }
+    .stats .ratio .have {
+      color: var(--color-accent-wood);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       Pet cards · 240px tall
+       ============================================================ */
+    .pet-list {
+      padding: 24px 24px 0;
+      display: flex; flex-direction: column;
+      gap: 16px;
+    }
+
+    .pet-card {
+      min-height: 240px;
+      background: var(--color-card-bg);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-base);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+
+    /* ---------- Top 90px portrait band ---------- */
+    .pet-card .top {
+      height: 90px;
+      padding: 0 20px;
+      background: var(--color-accent-soft);   /* default 豆豆 — 浅竹青 */
+      display: flex; align-items: center;
+      gap: 16px;
+    }
+    .pet-card.is-new .top {
+      background: var(--color-shimmer-bg);     /* 小花 · 浅木棕 */
+    }
+    .pet-card .top .avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--color-accent-wood);
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(139,111,71,0.18);
+      background:
+        radial-gradient(circle at 36% 30%, #ffd9a8 0%, #f0b97a 45%, #c9885a 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pet-card .top .avatar.cat-grey {
+      background:
+        radial-gradient(circle at 36% 30%, #efe7dc 0%, #c2b4a4 50%, #7e7466 100%);
+    }
+    /* simple cat-face overlay for placeholder warmth */
+    .pet-card .top .avatar .face {
+      width: 100%; height: 100%;
+      position: relative;
+    }
+    .pet-card .top .avatar .face::before,
+    .pet-card .top .avatar .face::after {
+      content: "";
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(62,58,54,0.7);
+      top: 38%;
+    }
+    .pet-card .top .avatar .face::before { left: 32%; }
+    .pet-card .top .avatar .face::after  { right: 32%; }
+    .pet-card .top .avatar .face .nose {
+      position: absolute;
+      left: 50%; top: 54%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid rgba(139,90,60,0.85);
+    }
+
+    .pet-card .top .meta { flex: 1; min-width: 0; }
+    .pet-card .top .meta .name-row {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pet-card .top .meta .name {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+    .pet-card .top .meta .pill {
+      display: inline-flex; align-items: center;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: var(--r-pill);
+      background: var(--color-accent-wood);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .pet-card .top .meta .info {
+      margin-top: 4px;
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.4;
+    }
+    .pet-card .top .meta .info .sep {
+      margin: 0 6px;
+      color: var(--color-accent-wood);
+      opacity: 0.55;
+    }
+    .pet-card .top .meta .info .day-num {
+      color: var(--color-accent-wood);
+      font-weight: 600;
+    }
+    .pet-card .top .meta .pbar {
+      margin-top: 8px;
+      width: 80px;
+      height: 4px;
+      background: rgba(139,111,71,0.16);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .pet-card .top .meta .pbar .fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--color-accent-primary);
+    }
+    .pet-card.is-new .top .meta .pbar .fill {
+      background: var(--color-accent-wood);
+    }
+
+    /* ---------- Bottom 150px task area ---------- */
+    .pet-card .tasks {
+      padding: 16px 20px 20px;
+      display: flex; flex-direction: column;
+    }
+    .pet-card .tasks .tt {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+      margin: 0 0 12px;
+    }
+    .pet-card .tasks .list {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+      row-gap: 10px;
+    }
+    .pet-card .tasks .list li {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+    .pet-card .tasks .list li .box {
+      width: 20px; height: 20px;
+      border-radius: 5px;
+      border: 1.5px solid var(--color-accent-wood);
+      background: transparent;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: transparent;
+    }
+    /* Done variant — soft green filled with check */
+    .pet-card .tasks .list li.is-done .box {
+      background: var(--color-text-tertiary);
+      border-color: var(--color-text-tertiary);
+      color: #fff;
+    }
+    .pet-card .tasks .list li.is-done {
+      color: var(--hcolor-text-tertiary);
+      text-decoration: line-through;
+      text-decoration-color: var(--hcolor-text-tertiary);
+      font-weight: 400;
+    }
+    /* default pending — black 16 regular */
+    .pet-card .tasks .list li.is-pending {
+      color: var(--color-text-primary);
+      font-weight: 400;
+    }
+    /* emphasized pending (key tasks) — black semibold */
+    .pet-card .tasks .list li.is-pending-strong {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+    /* important "重点" — wood-brown semibold + sparkle */
+    .pet-card .tasks .list li.is-important {
+      color: var(--color-accent-wood);
+      font-weight: 600;
+    }
+    .pet-card .tasks .list li.is-important .box {
+      border-color: var(--color-accent-shimmer);
+      background: rgba(196,145,92,0.08);
+    }
+    .pet-card .tasks .list li .star {
+      width: 14px; height: 14px;
+      color: var(--color-accent-shimmer);
+      flex-shrink: 0;
+      margin-left: -2px;
+    }
+
+    /* ---------- Card CTA · 56px pill ---------- */
+    .pet-card .tasks .cta {
+      margin-top: 16px;
+      height: 56px;
+      width: 100%;
+      border-radius: var(--r-pill);
+      border: 0;
+      background: var(--color-accent-primary);
+      color: #fff;
+      font-family: var(--font-host-base);
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(107,142,127,0.28);
+      transition: transform .12s ease, background-color .2s ease;
+    }
+    .pet-card .tasks .cta:active { transform: translateY(1px) scale(0.99); }
+    .pet-card .tasks .cta:hover  { background: #5d8071; }
+    .pet-card .tasks .cta svg { width: 16px; height: 16px; }
+
+    /* ============================================================
+       Bottom note
+       ============================================================ */
+    .bottom-note {
+      margin: 32px 32px 32px;
+      text-align: center;
+      font-size: 16px;
+      color: var(--hcolor-text-secondary);
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+    .bottom-note .env {
+      width: 16px; height: 16px;
+      color: var(--color-accent-wood);
+      display: inline-block;
+      vertical-align: -3px;
+      margin-right: 4px;
+    }
+
+    /* ============================================================
+       Toast
+       ============================================================ */
+    .toast {
+      position: absolute;
+      left: 50%; top: 110px;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(62, 58, 54, 0.92);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-host-base);
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 70;
+      box-shadow: var(--shadow-lift);
+      max-width: 84%;
+      text-align: center;
+    }
+    .toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       Mobile fallback
+       ============================================================ */
+    @media (max-width: 880px) {
+      body.host { padding: 0; align-items: stretch; }
+      .desk { gap: 0; }
+      .desk-meta { display: none; }
+      .iphone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
+      .iphone::after { display: none; }
+      .iphone .screen { border-radius: 0; }
+      .iphone .notch { display: none; }
+      .iphone .statusbar { display: none; }
+      .page-scroll { padding-top: 0; }
+    }
+  </style>
+</head>
+<body class="host">
+  <div class="desk">
+
+    <aside class="desk-meta">
+      <div class="edition">Host · Page 10</div>
+      <span class="role">民宿端 · Host UI</span>
+      <h1>「今天家里<br/>住着两位小客。」</h1>
+      <p>每一只猫一张卡:头像、寄养进度、今日任务清单、一颗大按钮直接进入"打卡"流程。</p>
+      <p>豆豆(Day 3)用浅竹青,小花(Day 1 新到)用浅木棕,让王老板一眼分出"老熟人"与"新来的"。</p>
+      <div class="spec">
+        iPhone 15 · 393 × 852<br/>
+        HOST TOKENS · v0.1<br/>
+        2026 · 05 · 25
+      </div>
+    </aside>
+
+    <div class="iphone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="18" height="11" viewBox="0 0 18 11"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5C5 2.5 2.3 3.7.5 5.5L2 7C3.6 5.4 5.7 4.5 8 4.5s4.4.9 6 2.5l1.5-1.5C13.7 3.7 11 2.5 8 2.5zM8 6.5c-1.4 0-2.7.5-3.7 1.5L8 11l3.7-3c-1-1-2.3-1.5-3.7-1.5z" fill="currentColor"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12">
+              <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/>
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/>
+              <rect x="23" y="4" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="toast" id="toast"></div>
+
+        <div class="screen-content" id="screen-content" data-screen-label="Host 10 Pets Today">
+          <div class="page-scroll">
+
+            <!-- Top nav -->
+            <nav class="topnav">
+              <div class="iconbtn" id="back-btn" title="返回">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </div>
+              <div class="title">今日宠物</div>
+              <div class="right-link" id="all-link">
+                全部
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </nav>
+
+            <!-- Stats row -->
+            <div class="stats">
+              今天总共 <span class="em">2 位客人</span>
+              <span class="sep">·</span>
+              <span class="ratio">已完成 <span class="have">0</span> / 6 项任务</span>
+            </div>
+
+            <!-- Pet list -->
+            <section class="pet-list">
+
+              <!-- ===== 豆豆 (Day 3) ===== -->
+              <article class="pet-card" data-pet="doudou">
+                <div class="top">
+                  <div class="avatar" data-pet-name="doudou">
+                    <div class="face"><div class="nose"></div></div>
+                  </div>
+                  <div class="meta">
+                    <div class="name-row">
+                      <div class="name">豆豆</div>
+                    </div>
+                    <div class="info">
+                      上海橘猫<span class="sep">·</span>寄养 <span class="day-num">Day 3</span> / 共 7 天
+                    </div>
+                    <div class="pbar"><div class="fill" style="width: 43%;"></div></div>
+                  </div>
+                </div>
+
+                <div class="tasks">
+                  <div class="tt">今日豆豆的任务</div>
+                  <ul class="list">
+                    <li class="is-done">
+                      <span class="box">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                      </span>
+                      喂早餐
+                    </li>
+                    <li class="is-pending-strong">
+                      <span class="box"></span>
+                      拍照打卡
+                    </li>
+                    <li class="is-pending">
+                      <span class="box"></span>
+                      喂午餐
+                    </li>
+                    <li class="is-important">
+                      <span class="box"></span>
+                      状态提交
+                      <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 L13.2 9 L19 10.5 L13.2 12 L12 18 L10.8 12 L5 10.5 L10.8 9 Z"/></svg>
+                    </li>
+                  </ul>
+
+                  <button class="cta" data-pet="doudou">
+                    为豆豆打卡
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  </button>
+                </div>
+              </article>
+
+              <!-- ===== 小花 (Day 1 · new) ===== -->
+              <article class="pet-card is-new" data-pet="xiaohua">
+                <div class="top">
+                  <div class="avatar cat-grey" data-pet-name="xiaohua">
+                    <div class="face"><div class="nose"></div></div>
+                  </div>
+                  <div class="meta">
+                    <div class="name-row">
+                      <div class="name">小花</div>
+                      <span class="pill">Day 1 新到</span>
+                    </div>
+                    <div class="info">
+                      杭州英短<span class="sep">·</span>寄养 <span class="day-num">Day 1</span> / 共 5 天
+                    </div>
+                    <div class="pbar"><div class="fill" style="width: 20%;"></div></div>
+                  </div>
+                </div>
+
+                <div class="tasks">
+                  <div class="tt">今日小花的任务</div>
+                  <ul class="list">
+                    <li class="is-done">
+                      <span class="box">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                      </span>
+                      喂早餐
+                    </li>
+                    <li class="is-pending-strong">
+                      <span class="box"></span>
+                      拍照打卡
+                    </li>
+                    <li class="is-pending">
+                      <span class="box"></span>
+                      喂午餐
+                    </li>
+                    <li class="is-important">
+                      <span class="box"></span>
+                      状态提交
+                      <svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 L13.2 9 L19 10.5 L13.2 12 L12 18 L10.8 12 L5 10.5 L10.8 9 Z"/></svg>
+                    </li>
+                  </ul>
+
+                  <button class="cta" data-pet="xiaohua">
+                    为小花打卡
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  </button>
+                </div>
+              </article>
+
+            </section>
+
+            <p class="bottom-note">
+              <svg class="env" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="6" width="18" height="13" rx="2"/>
+                <path d="M3 8l9 6 9-6"/>
+              </svg>
+              完成所有任务后会自动发送日报给宠主
+            </p>
+
+          </div>
+        </div>
+
+      </div><!-- /screen -->
+    </div><!-- /iphone -->
+  </div><!-- /desk -->
+
+  <script>
+    (function () {
+      const sc      = document.getElementById('screen-content');
+      const back    = document.getElementById('back-btn');
+      const allLink = document.getElementById('all-link');
+      const toast   = document.getElementById('toast');
+      const ctas    = document.querySelectorAll('.pet-card .cta');
+      const portraitAreas = document.querySelectorAll('.pet-card .top');
+
+      let toastTimer;
+      function showToast(msg, ms) {
+        toast.textContent = msg;
+        toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('is-visible'), ms || 1600);
+      }
+
+      // Back → Host 9
+      back.addEventListener('click', () => {
+        sc.classList.add('is-leaving-back');
+        setTimeout(() => { window.location.href = 'Host 9 - Today.html'; }, 200);
+      });
+
+      // "全部 ›"
+      allLink.addEventListener('click', () => showToast('查看历史寄养记录 即将开放'));
+
+      // Pet CTA → Host 11 打卡
+      ctas.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sc.classList.add('is-leaving-forward');
+          setTimeout(() => { window.location.href = 'Host 11 - Checkin.html'; }, 200);
+        });
+      });
+
+      // Click portrait area / card body → pet detail (alert per spec)
+      portraitAreas.forEach(area => {
+        area.addEventListener('click', () => {
+          const card = area.closest('.pet-card');
+          const pet = card.dataset.pet;
+          alert((pet === 'doudou' ? '豆豆' : '小花') + ' 详情页(未开发)');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

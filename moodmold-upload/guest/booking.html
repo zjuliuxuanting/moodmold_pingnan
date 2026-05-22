@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moodmold · 寄养预约</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../tokens.css" />
+
+  <style>
+    /* ============================================================
+       Desk + iPhone (shared chrome) — same as Pages 1 & 2
+       ============================================================ */
+    body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(232,239,235,0.45) 0%, transparent 55%),
+        var(--color-primary-bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+    .desk {
+      display: flex;
+      gap: 64px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .desk-meta { max-width: 280px; font-family: var(--font-sans); }
+    .desk-meta .edition {
+      font-family: var(--font-en-serif); font-style: italic; font-size: 15px;
+      color: var(--color-accent-wood); letter-spacing: 0.02em; margin-bottom: 8px;
+    }
+    .desk-meta h1 {
+      font-family: var(--font-serif); font-size: 32px; font-weight: 600;
+      line-height: 1.3; margin: 0 0 16px;
+    }
+    .desk-meta p {
+      font-size: 14px; color: var(--color-text-secondary);
+      line-height: 1.7; margin: 0 0 12px;
+    }
+    .desk-meta .spec {
+      margin-top: 24px; padding-top: 18px;
+      border-top: 1px solid var(--color-border-light);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px; color: var(--color-text-tertiary);
+      letter-spacing: 0.06em; line-height: 1.8;
+    }
+
+    .iphone {
+      width: 393px; height: 852px;
+      background: #1a1a1a; border-radius: 54px; padding: 11px;
+      box-shadow: var(--shadow-lift), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative; flex-shrink: 0;
+    }
+    .iphone::after {
+      content: ""; position: absolute;
+      left: -2px; top: 180px; width: 3px; height: 60px;
+      background: #2a2a2a; border-radius: 2px;
+    }
+    .iphone .screen {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      border-radius: 44px; overflow: hidden; position: relative;
+    }
+    .iphone .notch {
+      position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px; background: #1a1a1a;
+      border-radius: 20px; z-index: 50;
+    }
+    .iphone .statusbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 54px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 28px 0;
+      font-family: var(--font-en-sans); font-size: 15px; font-weight: 600;
+      color: var(--color-text-primary); z-index: 40; pointer-events: none;
+    }
+    .iphone .statusbar .icons { display: inline-flex; gap: 5px; align-items: center; }
+
+    /* ============================================================
+       Page transition (matches Pages 1 & 2)
+       ============================================================ */
+    .screen-content {
+      position: absolute; inset: 0;
+      animation: pageEnter 400ms ease-out both;
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateX(8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .screen-content.is-leaving-back {
+      animation: pageLeaveBack 200ms ease-out forwards;
+    }
+    .screen-content.is-leaving-forward {
+      animation: pageLeaveForward 200ms ease-out forwards;
+    }
+    @keyframes pageLeaveForward {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(-8px); }
+    }
+    @keyframes pageLeaveBack {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(8px); }
+    }
+
+    /* ============================================================
+       Scroll surface
+       ============================================================ */
+    .page-scroll {
+      width: 100%; height: 100%;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-top: 54px;
+      padding-bottom: 140px;
+      background: var(--color-primary-bg);
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       Top nav · back / title / symmetric placeholder
+       ============================================================ */
+    .topnav {
+      height: 56px; padding: 0 16px;
+      display: grid; grid-template-columns: 40px 1fr 40px;
+      align-items: center;
+    }
+    .topnav .iconbtn {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-primary);
+      transition: background-color .15s ease;
+    }
+    .topnav .iconbtn:hover { background: rgba(62,58,54,0.06); }
+    .topnav .title {
+      text-align: center; font-family: var(--font-sans);
+      font-size: 16px; font-weight: 500; color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    /* ============================================================
+       Inn summary card · 88px
+       ============================================================ */
+    .inn-summary {
+      margin: 16px 24px 0;
+      height: 88px;
+      background: var(--color-card-bg);
+      border-radius: var(--r-card);
+      padding: 0 16px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: var(--shadow-base);
+    }
+    .inn-summary .photo {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid var(--color-border-light);
+    }
+    .inn-summary .meta { flex: 1; min-width: 0; line-height: 1.4; }
+    .inn-summary .name {
+      font-family: var(--font-sans);
+      font-size: 16px; font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .inn-summary .sub {
+      font-size: 14px; color: var(--color-text-secondary);
+      margin-top: 4px;
+    }
+    .inn-summary .sub .accent { color: var(--color-accent-wood); }
+
+    /* ============================================================
+       Section · shared
+       ============================================================ */
+    .section {
+      padding: 32px 24px 0;
+    }
+    .section .sec-title {
+      font-family: var(--font-serif);
+      font-size: 18px; font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+    }
+    .section .sec-hint {
+      font-family: var(--font-sans);
+      font-size: 14px; color: var(--color-text-secondary);
+      margin-top: 8px; line-height: 1.5;
+    }
+
+    /* ============================================================
+       Photo upload zone · 120 × 120
+       ============================================================ */
+    .upload-row {
+      margin-top: 16px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .upload-zone {
+      width: 120px; height: 120px;
+      border-radius: var(--r-card);
+      border: 1.5px dashed var(--color-border-light);
+      background: rgba(255,255,255,0.5);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+      cursor: pointer;
+      color: var(--color-text-tertiary);
+      transition: border-color .2s ease, background-color .2s ease, transform .15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-zone:hover {
+      border-color: var(--color-accent-primary);
+      color: var(--color-accent-primary);
+      background: var(--color-accent-soft);
+    }
+    .upload-zone:active { transform: scale(0.98); }
+    .upload-zone .plus {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .upload-zone .plus svg { display: block; }
+    .upload-zone .label {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .upload-zone.is-uploaded {
+      border-style: solid;
+      border-color: var(--color-accent-primary);
+      background: linear-gradient(135deg, #f0d9b8 0%, #d6a877 60%, #a3784c 100%);
+      color: #fff;
+    }
+    .upload-zone.is-uploaded .plus,
+    .upload-zone.is-uploaded .label { display: none; }
+    .upload-zone .preview-name {
+      display: none;
+      font-family: var(--font-serif);
+      font-size: 14px;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      letter-spacing: 0.04em;
+    }
+    .upload-zone .preview-edit {
+      display: none;
+      position: absolute;
+      right: 8px; bottom: 8px;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.95);
+      align-items: center; justify-content: center;
+      color: var(--color-text-primary);
+    }
+    .upload-zone.is-uploaded .preview-name,
+    .upload-zone.is-uploaded .preview-edit {
+      display: flex;
+    }
+
+    .upload-hint {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+    .upload-hint b {
+      display: block;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    /* ============================================================
+       Form fields
+       ============================================================ */
+    .field {
+      margin-top: 16px;
+    }
+    .field:first-child { margin-top: 16px; }
+    .field .label {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    /* Gender selector · 44px circles */
+    .gender-row {
+      display: flex; gap: 12px; align-items: center;
+    }
+    .gender-opt {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border-light);
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 16px; font-weight: 500;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all .18s ease;
+      user-select: none;
+    }
+    .gender-opt:active { transform: scale(0.94); }
+    .gender-opt.is-selected {
+      background: var(--color-accent-primary);
+      border-color: var(--color-accent-primary);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(107,142,127,0.25);
+    }
+    .gender-opt .sym {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      margin-left: 1px;
+      opacity: 0.7;
+    }
+
+    /* ============================================================
+       Date picker button
+       ============================================================ */
+    .date-btn {
+      margin-top: 16px;
+      height: 52px;
+      padding: 0 16px 0 18px;
+      border-radius: var(--r-input);
+      border: 1px solid var(--color-border-light);
+      background: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer;
+      width: 100%;
+      font-family: var(--font-sans);
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .date-btn:hover {
+      border-color: var(--color-accent-primary);
+    }
+    .date-btn:active { transform: scale(0.998); }
+    .date-btn .label {
+      display: flex; flex-direction: column; align-items: flex-start;
+      gap: 0;
+    }
+    .date-btn .date-range {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.3;
+    }
+    .date-btn .nights {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      color: var(--color-accent-wood);
+      font-size: 13px;
+      margin-left: 6px;
+      font-weight: 400;
+    }
+    .date-btn .chev {
+      color: var(--color-text-tertiary);
+    }
+
+    /* ============================================================
+       Price summary card · cream
+       ============================================================ */
+    .price-card {
+      margin-top: 16px;
+      border-radius: var(--r-card);
+      background: var(--color-accent-cream);
+      padding: 18px 20px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .price-card::before {
+      /* subtle ink stamp ornament */
+      content: "";
+      position: absolute;
+      right: -28px; bottom: -28px;
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      border: 1px solid var(--color-accent-wood);
+      opacity: 0.12;
+    }
+    .price-card .top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .price-card .left .lbl {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .price-card .left .amt {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      margin-top: 4px;
+    }
+    .price-card .left .amt .yuan {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 500;
+      vertical-align: 2px;
+      margin-right: 2px;
+      color: var(--color-text-primary);
+    }
+    .price-card .detail-link {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-accent-primary);
+      font-weight: 500;
+      display: inline-flex; align-items: center;
+      cursor: pointer;
+      transition: color .15s ease;
+      padding: 4px 0;
+      position: relative; z-index: 2;
+    }
+    .price-card .detail-link:hover { color: #5d8071; }
+    .price-card .detail-link svg { margin-left: 2px; }
+    .price-card .breakdown {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(139,111,71,0.25);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+    }
+    .price-card .breakdown .dot {
+      display: inline-block; width: 4px; height: 4px;
+      border-radius: 50%; background: var(--color-accent-wood);
+      opacity: 0.5; vertical-align: middle;
+      margin: 0 6px 2px;
+    }
+
+    /* ============================================================
+       Bottom CTA · matches Page 1 pattern
+       ============================================================ */
+    .cta {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 120px;
+      padding: 16px 24px 24px;
+      background: var(--color-primary-bg);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      z-index: 20;
+    }
+    .cta::before {
+      content: ""; position: absolute;
+      left: 0; right: 0; top: -24px; height: 24px;
+      background: linear-gradient(180deg, rgba(245,241,234,0) 0%, var(--color-primary-bg) 100%);
+      pointer-events: none;
+    }
+    .cta .hint {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.02em;
+    }
+    .cta .hint .arrow {
+      color: var(--color-accent-wood);
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      margin: 0 4px;
+    }
+    .cta .btn { width: 100%; box-shadow: 0 6px 20px rgba(107,142,127,0.28); }
+
+    /* ============================================================
+       Toast (for Page 4 placeholder)
+       ============================================================ */
+    .toast {
+      position: absolute;
+      left: 50%; top: 100px;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(62, 58, 54, 0.92);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 60;
+      box-shadow: var(--shadow-lift);
+    }
+    .toast.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================================
+       Date picker sheet (slides up from bottom)
+       ============================================================ */
+    .sheet-mask {
+      position: absolute; inset: 0;
+      background: rgba(62,58,54,0);
+      pointer-events: none;
+      transition: background-color .22s ease;
+      z-index: 55;
+    }
+    .sheet-mask.is-open {
+      background: rgba(62,58,54,0.35);
+      pointer-events: auto;
+    }
+    .sheet {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: var(--color-card-bg);
+      border-radius: 24px 24px 0 0;
+      padding: 12px 24px 28px;
+      transform: translateY(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+      z-index: 56;
+      max-height: 60%;
+      overflow-y: auto;
+    }
+    .sheet.is-open { transform: translateY(0); }
+    .sheet .grabber {
+      width: 36px; height: 4px;
+      background: var(--color-border-light);
+      border-radius: 2px;
+      margin: 0 auto 18px;
+    }
+    .sheet h4 {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 6px;
+      color: var(--color-text-primary);
+    }
+    .sheet .sub {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-bottom: 16px;
+    }
+    .sheet .preset {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .sheet .preset .opt {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border-light);
+      background: #fff;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .sheet .preset .opt:hover {
+      border-color: var(--color-accent-primary);
+    }
+    .sheet .preset .opt.is-selected {
+      background: var(--color-accent-soft);
+      border-color: var(--color-accent-primary);
+    }
+    .sheet .preset .opt .nm {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .sheet .preset .opt .info {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      color: var(--color-accent-wood);
+      font-size: 13px;
+    }
+    .sheet .confirm {
+      margin-top: 4px;
+    }
+    .sheet .confirm .btn { width: 100%; }
+
+    /* ============================================================
+       Inn photo small SVG illustration
+       ============================================================ */
+    .inn-photo-svg {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* ============================================================
+       Mobile fallback
+       ============================================================ */
+    @media (max-width: 880px) {
+      body { padding: 0; align-items: stretch; }
+      .desk { gap: 0; }
+      .desk-meta { display: none; }
+      .iphone {
+        width: 100vw; height: 100vh;
+        border-radius: 0; padding: 0; box-shadow: none;
+      }
+      .iphone::after { display: none; }
+      .iphone .screen { border-radius: 0; }
+      .iphone .notch { display: none; }
+      .iphone .statusbar { display: none; }
+      .page-scroll { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="desk">
+
+    <aside class="desk-meta">
+      <div class="edition">Page 03 · Book</div>
+      <h1>「填一份<br/>给乡村的家书。」</h1>
+      <p>把客猫的小档案交给民宿:照片、名字、品种、性别、年龄、住几晚。然后用一颗按钮把豆豆送上去屏南的路。</p>
+      <p>主按钮触发淡出过场,进入 Page 4(加载页 · 通行证生成中)。</p>
+      <div class="spec">
+        iPhone 15 · 393 × 852<br/>
+        DESIGN TOKENS · v0.1<br/>
+        2026 · 05 · 22
+      </div>
+    </aside>
+
+    <div class="iphone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="18" height="11" viewBox="0 0 18 11"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5C5 2.5 2.3 3.7.5 5.5L2 7C3.6 5.4 5.7 4.5 8 4.5s4.4.9 6 2.5l1.5-1.5C13.7 3.7 11 2.5 8 2.5zM8 6.5c-1.4 0-2.7.5-3.7 1.5L8 11l3.7-3c-1-1-2.3-1.5-3.7-1.5z" fill="currentColor"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12">
+              <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/>
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/>
+              <rect x="23" y="4" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">Page 4 · 通行证生成中 即将开放</div>
+
+        <!-- Date picker sheet -->
+        <div class="sheet-mask" id="sheet-mask"></div>
+        <div class="sheet" id="sheet">
+          <div class="grabber"></div>
+          <h4>选一个去屏南的日期</h4>
+          <div class="sub">完整 prototype 的日历视图待后续。这里先用几个常用区间。</div>
+          <div class="preset" id="preset-list">
+            <div class="opt is-selected" data-range="5 月 25 日 - 5 月 31 日" data-nights="7" data-price="1,050">
+              <span class="nm">5 月 25 日 - 5 月 31 日</span>
+              <span class="info">7 晚 · ¥1,050</span>
+            </div>
+            <div class="opt" data-range="6 月 1 日 - 6 月 5 日" data-nights="5" data-price="750">
+              <span class="nm">6 月 1 日 - 6 月 5 日</span>
+              <span class="info">5 晚 · ¥750</span>
+            </div>
+            <div class="opt" data-range="6 月 10 日 - 6 月 20 日" data-nights="11" data-price="1,650">
+              <span class="nm">6 月 10 日 - 6 月 20 日</span>
+              <span class="info">11 晚 · ¥1,650</span>
+            </div>
+            <div class="opt" data-range="7 月 1 日 - 8 月 1 日" data-nights="31" data-price="4,650">
+              <span class="nm">整个七月 · 暑期长托</span>
+              <span class="info">31 晚 · ¥4,650</span>
+            </div>
+          </div>
+          <div class="confirm">
+            <button class="btn btn--primary" id="sheet-confirm">确认日期</button>
+          </div>
+        </div>
+
+        <div class="screen-content" id="screen-content" data-screen-label="03 Book">
+          <div class="page-scroll">
+
+            <!-- Top nav -->
+            <nav class="topnav">
+              <div class="iconbtn" id="back-btn" title="返回">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </div>
+              <div class="title">寄养预约</div>
+              <div></div>
+            </nav>
+
+            <!-- Inn summary -->
+            <div class="inn-summary">
+              <div class="photo">
+                <!-- mini mountain illustration matching Page 2's 山居民宿 -->
+                <svg class="inn-photo-svg" viewBox="0 0 64 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="mini-sky" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#E8EFEB"/>
+                      <stop offset="100%" stop-color="#F5EFE6"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="64" height="64" fill="url(#mini-sky)"/>
+                  <circle cx="48" cy="18" r="6" fill="#FFF4E6" opacity="0.9"/>
+                  <path d="M0,42 L14,28 L26,36 L40,22 L54,32 L64,26 L64,64 L0,64 Z" fill="#8FA899" opacity="0.85"/>
+                  <path d="M0,52 L20,44 L40,48 L64,40 L64,64 L0,64 Z" fill="#6B8E7F"/>
+                  <g transform="translate(32,46)">
+                    <path d="M-7,2 L0,-3 L7,2 Z" fill="#5A4A3A"/>
+                    <rect x="-6" y="2" width="12" height="8" fill="#EFE7D6"/>
+                    <rect x="-1" y="4" width="3" height="6" fill="#5A4A3A"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="meta">
+                <div class="name">山居民宿</div>
+                <div class="sub">屏南龙潭村 · 由<span class="accent">有福</span>接待</div>
+              </div>
+            </div>
+
+            <!-- Cat photo upload -->
+            <section class="section">
+              <div class="sec-title">你的猫</div>
+              <div class="sec-hint">推荐正面照,光线充足,背景简洁。</div>
+              <div class="upload-row">
+                <label class="upload-zone" id="upload-zone" for="file-input">
+                  <div class="plus">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                  </div>
+                  <div class="label">上传照片</div>
+                  <div class="preview-name" id="preview-name">豆豆</div>
+                  <div class="preview-edit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </div>
+                  <input type="file" id="file-input" accept="image/jpeg,image/png" hidden />
+                </label>
+                <div class="upload-hint">
+                  <b>建议</b>
+                  支持 JPG / PNG<br/>
+                  不超过 5MB
+                </div>
+              </div>
+            </section>
+
+            <!-- Cat info form -->
+            <section class="section">
+              <div class="sec-title">客猫档案</div>
+
+              <div class="field">
+                <label class="label" for="cat-name">名字</label>
+                <input class="input" type="text" id="cat-name" placeholder="如: 豆豆 / Momo" />
+              </div>
+
+              <div class="field">
+                <label class="label" for="cat-breed">品种</label>
+                <input class="input" type="text" id="cat-breed" placeholder="如: 橘猫 / 英短" />
+              </div>
+
+              <div class="field">
+                <span class="label">性别</span>
+                <div class="gender-row" id="gender-row">
+                  <button class="gender-opt is-selected" data-gender="male" type="button" title="公">
+                    公
+                  </button>
+                  <button class="gender-opt" data-gender="female" type="button" title="母">
+                    母
+                  </button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="cat-age">年龄</label>
+                <input class="input" type="text" id="cat-age" placeholder="如: 3 岁" />
+              </div>
+            </section>
+
+            <!-- Date picker -->
+            <section class="section">
+              <div class="sec-title">寄养日期</div>
+              <button class="date-btn" id="date-btn" type="button">
+                <span class="label">
+                  <span class="date-range">
+                    <span id="date-text">5 月 25 日 - 5 月 31 日</span>
+                    <span class="nights" id="date-nights">(7 晚)</span>
+                  </span>
+                </span>
+                <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </button>
+            </section>
+
+            <!-- Price summary -->
+            <section class="section">
+              <div class="sec-title">费用</div>
+              <div class="price-card">
+                <div class="top">
+                  <div class="left">
+                    <div class="lbl">总费用</div>
+                    <div class="amt"><span class="yuan">¥</span><span id="price-amt">1,050</span></div>
+                  </div>
+                  <div class="detail-link" id="detail-link">
+                    明细
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                  </div>
+                </div>
+                <div class="breakdown">含寄养费<span class="dot"></span>数字纪念卡<span class="dot"></span>保险</div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Fixed CTA -->
+          <div class="cta">
+            <div class="hint">下一步将为豆豆生成<span class="arrow">·</span>屏南通行证</div>
+            <button class="btn btn--primary" id="cta-confirm">确认预约,送豆豆去屏南</button>
+          </div>
+        </div>
+
+      </div><!-- /screen -->
+    </div><!-- /iphone -->
+  </div><!-- /desk -->
+
+  <script>
+    (function () {
+      const sc = document.getElementById('screen-content');
+      const back = document.getElementById('back-btn');
+      const cta  = document.getElementById('cta-confirm');
+      const toast = document.getElementById('toast');
+
+      // -------- Back to Page 2
+      back.addEventListener('click', () => {
+        sc.classList.add('is-leaving-back');
+        setTimeout(() => { window.location.href = 'Page 2 - Stay.html'; }, 200);
+      });
+
+      // -------- Photo upload
+      const uploadZone = document.getElementById('upload-zone');
+      const fileInput  = document.getElementById('file-input');
+      const previewName = document.getElementById('preview-name');
+      const catNameInput = document.getElementById('cat-name');
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+          uploadZone.classList.add('is-uploaded');
+          const nameOnFace = catNameInput.value.trim() || '豆豆';
+          previewName.textContent = nameOnFace;
+        }
+      });
+      // Keep preview name in sync with name input
+      catNameInput.addEventListener('input', () => {
+        if (uploadZone.classList.contains('is-uploaded')) {
+          previewName.textContent = catNameInput.value.trim() || '豆豆';
+        }
+      });
+
+      // -------- Gender selection
+      const genderRow = document.getElementById('gender-row');
+      genderRow.addEventListener('click', (e) => {
+        const opt = e.target.closest('.gender-opt');
+        if (!opt) return;
+        genderRow.querySelectorAll('.gender-opt').forEach(o => o.classList.remove('is-selected'));
+        opt.classList.add('is-selected');
+      });
+
+      // -------- Date picker sheet
+      const dateBtn = document.getElementById('date-btn');
+      const sheet = document.getElementById('sheet');
+      const sheetMask = document.getElementById('sheet-mask');
+      const presetList = document.getElementById('preset-list');
+      const sheetConfirm = document.getElementById('sheet-confirm');
+      const dateText = document.getElementById('date-text');
+      const dateNights = document.getElementById('date-nights');
+      const priceAmt = document.getElementById('price-amt');
+
+      function openSheet() {
+        sheet.classList.add('is-open');
+        sheetMask.classList.add('is-open');
+      }
+      function closeSheet() {
+        sheet.classList.remove('is-open');
+        sheetMask.classList.remove('is-open');
+      }
+      dateBtn.addEventListener('click', openSheet);
+      sheetMask.addEventListener('click', closeSheet);
+      presetList.addEventListener('click', (e) => {
+        const opt = e.target.closest('.opt');
+        if (!opt) return;
+        presetList.querySelectorAll('.opt').forEach(o => o.classList.remove('is-selected'));
+        opt.classList.add('is-selected');
+      });
+      sheetConfirm.addEventListener('click', () => {
+        const sel = presetList.querySelector('.opt.is-selected');
+        if (sel) {
+          dateText.textContent = sel.dataset.range;
+          dateNights.textContent = '(' + sel.dataset.nights + ' 晚)';
+          priceAmt.textContent = sel.dataset.price;
+        }
+        closeSheet();
+      });
+
+      // -------- Detail link
+      document.getElementById('detail-link').addEventListener('click', () => {
+        toast.textContent = '费用明细弹层 · 即将开放';
+        toast.classList.add('is-visible');
+        setTimeout(() => toast.classList.remove('is-visible'), 1600);
+      });
+
+      // -------- CTA → Page 4
+      cta.addEventListener('click', () => {
+        sc.classList.add('is-leaving-forward');
+        setTimeout(() => { window.location.href = 'Page 4 - Pass.html'; }, 200);
+      });
+    })();
+  </script>
+</body>
+</html>

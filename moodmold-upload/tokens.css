@@ -1,0 +1,203 @@
+/* ============================================================
+   Moodmold · Design Tokens
+   Modern Organic · 现代有机 · 古村午后
+   ============================================================ */
+
+:root {
+  /* ---------- Color · 色彩 ---------- */
+  --color-primary-bg: #F5F1EA;       /* 莫兰迪暖白底 */
+  --color-card-bg: #FFFFFF;
+  --color-text-primary: #3E3A36;     /* 深咖 */
+  --color-text-secondary: #8B847C;   /* 浅咖 */
+  --color-text-tertiary: #B0A89D;    /* 灰咖 */
+  --color-accent-primary: #6B8E7F;   /* 屏南竹青 */
+  --color-accent-wood: #8B6F47;      /* 廊桥木棕 */
+  --color-accent-soft: #E8EFEB;      /* 竹青浅 */
+  --color-accent-cream: #F5EFE6;     /* 木棕浅 */
+  --color-accent-shimmer: #C4915C;   /* 闪闪金棕 */
+  --color-shimmer-bg: #FFF4E6;       /* 闪闪浅底 */
+  --color-border-light: #D8D2C5;
+  --shadow-base: 0 2px 16px rgba(62, 58, 54, 0.08);
+  --shadow-soft: 0 1px 4px rgba(62, 58, 54, 0.04);
+  --shadow-lift: 0 8px 32px rgba(62, 58, 54, 0.10);
+
+  /* ---------- Type · 字体 ---------- */
+  --font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif;
+  --font-sans: "Noto Sans SC", "Inter", -apple-system, system-ui, sans-serif;
+  --font-en-serif: "Cormorant Garamond", "Noto Serif SC", serif;
+  --font-en-sans: "Inter", "Noto Sans SC", sans-serif;
+
+  --fs-h1: 32px;   --lh-h1: 1.3;
+  --fs-h2: 24px;   --lh-h2: 1.4;
+  --fs-h3: 20px;   --lh-h3: 1.4;
+  --fs-h4: 18px;   --lh-h4: 1.5;
+  --fs-body: 16px; --lh-body: 1.6;
+  --fs-caption: 14px; --lh-caption: 1.5;
+  --fs-small: 12px;   --lh-small: 1.4;
+
+  /* ---------- Spacing · 间距 8pt ---------- */
+  --sp-xs: 8px;
+  --sp-sm: 16px;
+  --sp-md: 24px;   /* default page padding */
+  --sp-lg: 32px;
+  --sp-xl: 48px;
+  --sp-2xl: 64px;
+
+  /* ---------- Radius · 圆角 ---------- */
+  --r-input: 12px;
+  --r-card: 16px;
+  --r-image: 24px;
+  --r-pill: 999px;
+}
+
+/* ---------- Base reset for preview surfaces ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-primary-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   Component primitives — reusable across the prototype
+   ============================================================ */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-xs);
+  height: 52px;
+  padding: 0 28px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease;
+  user-select: none;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn--primary {
+  background: var(--color-accent-primary);
+  color: #fff;
+}
+.btn--primary:hover { background: #5d8071; }
+
+.btn--secondary {
+  background: transparent;
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+}
+.btn--secondary:hover { background: var(--color-accent-soft); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.btn--ghost:hover { color: var(--color-text-primary); }
+
+.btn--disabled,
+.btn[disabled] {
+  background: var(--color-border-light);
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.btn--small {
+  height: 40px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+/* Card */
+.card {
+  background: var(--color-card-bg);
+  border-radius: var(--r-card);
+  padding: 20px;
+  box-shadow: var(--shadow-base);
+}
+
+/* Input */
+.input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border-radius: var(--r-input);
+  border: 1px solid var(--color-border-light);
+  background: #fff;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.input::placeholder { color: var(--color-text-tertiary); }
+.input:focus {
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(107, 142, 127, 0.15);
+}
+
+/* Tag / Pill */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-primary);
+  white-space: nowrap;
+}
+.tag--wood {
+  background: var(--color-accent-cream);
+  color: var(--color-accent-wood);
+}
+.tag--shimmer {
+  background: var(--color-shimmer-bg);
+  color: var(--color-accent-shimmer);
+}
+.tag--outline {
+  background: transparent;
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+
+/* Avatar */
+.avatar {
+  display: inline-block;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-accent-wood);
+  background: var(--color-accent-cream);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar--32  { width: 32px;  height: 32px;  border-width: 1px; }
+.avatar--48  { width: 48px;  height: 48px;  }
+.avatar--64  { width: 64px;  height: 64px;  }
+.avatar--96  { width: 96px;  height: 96px;  border-width: 2px; }
+.avatar--128 { width: 128px; height: 128px; border-width: 2px; }
+
+/* Type helpers */
+.h1 { font-family: var(--font-serif); font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700; margin: 0; }
+.h2 { font-family: var(--font-serif); font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600; margin: 0; }
+.h3 { font-family: var(--font-serif); font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 500; margin: 0; }
+.h4 { font-family: var(--font-sans);  font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: 500; margin: 0; }
+.body { font-size: var(--fs-body); line-height: var(--lh-body); }
+.caption { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--color-text-secondary); }
+.small { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--color-text-tertiary); }
