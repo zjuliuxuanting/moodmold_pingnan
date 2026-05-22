@@ -28,4 +28,8 @@
 
 ## 恢复指引
 
-如果会话中断，重新启动
+如果会话中断，重新启动后：
+1. 阅读 `memory/project/project-context.md` 了解项目背景
+2. 阅读 `memory/project/task-progress.md` 了解进度
+3. 阅读本文件了解中断前的状态
+4. 从上次中断的步骤继续

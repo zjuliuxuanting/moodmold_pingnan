@@ -1,6 +1,6 @@
 # 技术决策记录
 
-> 最后更新：2026-05-22
+> 最后更新：2026-05-22（v0.2 整合后）
 > 记录格式：决策日期 | 决策内容 | 决策理由 | 决策人
 
 ---
@@ -9,11 +9,11 @@
 
 | 日期 | 决策 | 理由 |
 |------|------|------|
-| 2026-05-22 | 前后端分离架构 | 前端独立部署，后端提供 RESTful API |
+| 2026-05-22 | **纯前端 H5 单页应用** | 3 天 MVP 不做后端，数据用 localStorage + 静态 JSON |
 | 2026-05-22 | 前端 React + TypeScript + Vite | 生态丰富，类型安全，开发体验好 |
-| 2026-05-22 | 后端 Python + FastAPI | 自动生成 API 文档，与硬件交互友好，适合训练盒场景 |
+| 2026-05-22 | **不做后端** | 无用户系统、无数据库、无 API；Moodle 出图用预设资产叠加，不调 AI |
 
-## 前端技术栈
+## 前端技术栈（3 天 MVP 版）
 
 | 决策 | 选型 | 理由 |
 |------|------|------|
@@ -21,25 +21,26 @@
 | 类型 | TypeScript 严格模式 | 类型安全 |
 | 构建 | Vite | 开发体验快 |
 | 样式 | Tailwind CSS | 原子化 CSS，快速开发 |
-| 状态管理 | Zustand + TanStack Query | 轻量 + 服务端状态缓存 |
-| 路由 | React Router v6 | 标准选择 |
-| 组件库 | shadcn/ui (Radix UI) | 无头组件，可定制 |
-| 测试 | Vitest + React Testing Library | 与 Vite 原生集成 |
+| 路由 | React Router v6 | 5 个页面路由 |
+| 状态 | localStorage + React Context | 无需状态管理库，够用 |
+| 部署 | Vercel / Netlify | 免费 + 一键部署 + 自定义域名 |
+| 组件库 | 不需要（手写组件） | 页面数少，不需要引入组件库重量级依赖 |
 
-## 后端技术栈
+## MVP 不做（省下来的）
 
-| 决策 | 选型 | 理由 |
-|------|------|------|
-| 语言 | Python 3.11+ | 易读、生态丰富、硬件交互友好 |
-| 框架 | FastAPI | 自动 OpenAPI 文档、类型校验 |
-| ORM | SQLAlchemy 2.0 + SQLModel | 成熟的 Python ORM |
-| 数据库 | SQLite（开发）/ PostgreSQL（生产） | 开发轻量，生产可靠 |
-| 迁移 | Alembic | 与 SQLAlchemy 集成 |
-| 认证 | JWT + OAuth2 | 无状态认证 |
-| 测试 | pytest + httpx | Python 标准测试工具 |
+| 项目 | 原因 |
+|------|------|
+| 后端 API | 无用户系统、无真实数据存储 |
+| 数据库（SQLite/Postgres） | localStorage 替代 |
+| 用户登录/注册 | 不需要，产品形态是"扫挂牌"进入 |
+| WebSocket 实时通信 | 不需要，托管方手动更新 |
+| JWT / OAuth | 无登录，无需认证 |
+| AI 模型调用 | 出图用预设资产叠加，不调真实 AI |
+| Docker / K8s | Vercel 一键部署 |
+| 测试套件 | 3 天优先跑通 Demo，测试手工做 |
 
 ## 待决定
 
-- [ ] 是否需要 WebSocket 实时通信（训练过程监控）
-- [ ] 数据库最终用 SQLite 还是 PostgreSQL
-- [ ] 是否需要用户登录系统（还是单机使用）
+- [ ] 部署到 Vercel 还是 Netlify？
+- [ ] 需要自定义域名吗？
+- [ ] 演示时是否需要 Service Worker 离线缓存？
