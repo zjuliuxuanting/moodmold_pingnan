@@ -9,7 +9,7 @@
 ```
 memory/
 ├── long-term/              🔒 长期记忆 — 几乎不变的"源代码"
-│   ├── personalities/      ← 各 Agent 的系统提示词（角色定义）
+│   ├── agent-workflow.md   ← Agent 相互调用工作流（Task 工具协议）
 │   ├── conventions.md      ← 编码规范（项目宪法）
 │   └── principles.md       ← 开发哲学与核心原则
 │
@@ -25,6 +25,8 @@ memory/
     └── context-snapshot.md ← 崩溃恢复快照
 ```
 
+> 注意：Agent 角色定义（personalities）已移至 `agents/personalities/` 目录，便于与技能系统并列管理。
+
 ---
 
 ## 三类记忆的读写规则
@@ -38,9 +40,11 @@ memory/
 ## Memory Manager 的工作流
 
 ### 会话开始时
-1. 读取 `context-snapshot.md` 检查是否有中断恢复
-2. 读取 `task-progress.md` 了解当前进度
-3. 读取 `current-task.md` 恢复工作上下文
+1. 读取 `agents/CLAUDE.md` 了解行为指导
+2. 读取 `agents/CONTEXT.md` 了解共享术语
+3. 读取 `context-snapshot.md` 检查是否有中断恢复
+4. 读取 `task-progress.md` 了解当前进度
+5. 读取 `current-task.md` 恢复工作上下文
 
 ### 会话进行中
 1. 每个重要决策 → 更新 `tech-decisions.md`

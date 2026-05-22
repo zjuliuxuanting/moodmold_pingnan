@@ -1,0 +1,123 @@
+/* ============================================================
+   Moodmold · Host-side Design Tokens (民宿端)
+   Loads on top of tokens.css to override sizing for 45-65岁 用户。
+   Same palette · larger type · taller controls · less decoration.
+   ============================================================ */
+
+:root {
+  /* ---------- Type · 字体 ---------- */
+  /* Body / form / button — Sans only. Serif kept only for brand wordmark. */
+  --font-host-base: "Noto Sans SC", "Inter", -apple-system, system-ui, sans-serif;
+  --font-host-wordmark: "Noto Serif SC", "Songti SC", serif;
+
+  /* ---------- Type scale · +20% ---------- */
+  --hfs-h1: 38px;   --hlh-h1: 1.3;
+  --hfs-h2: 28px;   --hlh-h2: 1.35;
+  --hfs-h3: 22px;   --hlh-h3: 1.4;
+  --hfs-h4: 20px;   --hlh-h4: 1.4;
+  --hfs-body: 18px; --hlh-body: 1.6;
+  --hfs-cap: 16px;  --hlh-cap: 1.5;   /* MIN — never go below */
+  --hfs-btn: 20px;
+  /* No 14, no 12. Caption floor is 16. */
+
+  /* ---------- Hit-target sizes ---------- */
+  --h-button: 64px;        /* main CTA */
+  --h-input:  60px;
+  --h-icon-btn: 48px;      /* nav/icon buttons */
+  --h-card-tap: 88px;      /* min tappable list-row */
+
+  /* ---------- Contrast bump · text ---------- */
+  --hcolor-text-primary:   #3E3A36;
+  --hcolor-text-secondary: #6B6560;  /* was #8B847C — bumped for legibility */
+  --hcolor-text-tertiary:  #8A847D;  /* was #B0A89D */
+
+  /* ---------- Reduced decoration ---------- */
+  --h-paper-grain-opacity: 0.04;     /* was 0.16 on owner-side */
+}
+
+/* ============================================================
+   Host-scoped base — apply by adding class="host" to <body>
+   ============================================================ */
+body.host {
+  font-family: var(--font-host-base);
+  font-size: var(--hfs-body);
+  line-height: var(--hlh-body);
+  color: var(--hcolor-text-primary);
+}
+
+/* All Moodmold wordmark stays serif (brand) */
+body.host .wordmark {
+  font-family: var(--font-host-wordmark);
+}
+
+/* ============================================================
+   Components — host overrides
+   ============================================================ */
+
+/* Buttons — taller, bolder, more emphatic */
+body.host .btn {
+  height: var(--h-button);
+  padding: 0 32px;
+  font-size: var(--hfs-btn);
+  font-weight: 600;        /* SemiBold for the host audience */
+  font-family: var(--font-host-base);
+  letter-spacing: 0.02em;
+}
+body.host .btn--primary {
+  background: var(--color-accent-primary);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(107, 142, 127, 0.32);
+}
+body.host .btn--primary:hover { background: #5d8071; }
+
+body.host .btn--secondary {
+  background: #fff;
+  color: var(--color-accent-primary);
+  border: 1.5px solid var(--color-accent-primary);
+}
+
+body.host .btn--small {
+  height: 52px;
+  font-size: 18px;
+  padding: 0 24px;
+}
+
+/* Input — taller */
+body.host .input {
+  height: var(--h-input);
+  font-family: var(--font-host-base);
+  font-size: var(--hfs-body);
+  border-width: 1.5px;
+}
+body.host .input::placeholder {
+  color: var(--hcolor-text-tertiary);
+  font-size: var(--hfs-body);
+}
+
+/* Tag/Pill — also slightly larger for readability */
+body.host .tag {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 14px;        /* tag is the one exception — pill ergonomics */
+  font-weight: 500;
+}
+
+/* Card — same radius/shadow, but type system on inside is sans + larger */
+body.host .card {
+  background: var(--color-card-bg);
+  border-radius: var(--r-card);
+  padding: 20px;
+  box-shadow: var(--shadow-base);
+}
+
+/* Type helpers — host scale */
+body.host .h-h1 { font-size: var(--hfs-h1);   line-height: var(--hlh-h1);  font-weight: 600; }
+body.host .h-h2 { font-size: var(--hfs-h2);   line-height: var(--hlh-h2);  font-weight: 600; }
+body.host .h-h3 { font-size: var(--hfs-h3);   line-height: var(--hlh-h3);  font-weight: 600; }
+body.host .h-h4 { font-size: var(--hfs-h4);   line-height: var(--hlh-h4);  font-weight: 500; }
+body.host .h-body { font-size: var(--hfs-body); line-height: var(--hlh-body); font-weight: 400; }
+body.host .h-cap  { font-size: var(--hfs-cap);  line-height: var(--hlh-cap);  font-weight: 400; color: var(--hcolor-text-secondary); }
+
+/* Status colors for completed/pending */
+body.host .status-done    { color: var(--color-accent-primary); font-weight: 600; }
+body.host .status-pending { color: var(--color-accent-wood);    font-weight: 600; }
