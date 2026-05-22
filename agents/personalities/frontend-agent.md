@@ -92,17 +92,12 @@ tools: Read, Write, Glob, Grep, RunCommand
 ### React 组件模板
 
 ```typescript
-// ✅ 好的 React 组件结构
 import { useState, useCallback, memo } from 'react';
 
 interface ComponentNameProps {
-  /** 组件标题 */
   title: string;
-  /** 数据列表 */
   items: Item[];
-  /** 点击回调 */
   onAction?: (id: string) => void;
-  /** 加载状态 */
   loading?: boolean;
 }
 
@@ -146,18 +141,8 @@ const ComponentName = memo<ComponentNameProps>(({
 });
 
 ComponentName.displayName = 'ComponentName';
-
 export { ComponentName };
 export type { ComponentNameProps };
-```
-
-### 状态管理模式
-
-```typescript
-// 1. 本地 UI 状态 → useState
-// 2. 表单状态 → React Hook Form / 受控组件
-// 3. 服务端状态 → TanStack Query (React Query)
-// 4. 全局应用状态 → Zustand / Context
 ```
 
 ### 项目路径约定

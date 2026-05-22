@@ -60,13 +60,6 @@ DELETE /api/v1/tasks/{id}     # 删除任务
   "message": "操作成功",
   "error_code": null
 }
-
-{
-  "success": false,
-  "data": null,
-  "message": "任务不存在",
-  "error_code": "TASK_NOT_FOUND"
-}
 ```
 
 ### HTTP 状态码使用
@@ -115,7 +108,6 @@ DELETE /api/v1/tasks/{id}     # 删除任务
 ### FastAPI 路由模板
 
 ```python
-# workspace/backend/src/routes/tasks.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
@@ -125,7 +117,6 @@ from ..deps import get_task_service
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
-
 @router.get("/", response_model=List[TaskResponse])
 async def list_tasks(
     skip: int = 0,
@@ -134,14 +125,12 @@ async def list_tasks(
 ):
     return await service.list_tasks(skip=skip, limit=limit)
 
-
 @router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
 async def create_task(
     payload: TaskCreate,
     service: TaskService = Depends(get_task_service),
 ):
     return await service.create_task(payload)
-
 
 @router.get("/{task_id}", response_model=TaskResponse)
 async def get_task(
@@ -155,38 +144,6 @@ async def get_task(
             detail={"message": "任务不存在", "error_code": "TASK_NOT_FOUND"},
         )
     return task
-```
-
-### Pydantic Schema 模板
-
-```python
-# workspace/backend/src/schemas/task.py
-from pydantic import BaseModel, Field
-from datetime import datetime
-from typing import Optional
-
-
-class TaskCreate(BaseModel):
-    title: str = Field(..., min_length=1, max_length=200, description="任务标题")
-    description: Optional[str] = Field(None, max_length=2000)
-    priority: int = Field(default=0, ge=0, le=5)
-
-
-class TaskUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=2000)
-    priority: Optional[int] = Field(None, ge=0, le=5)
-
-
-class TaskResponse(BaseModel):
-    id: str
-    title: str
-    description: Optional[str]
-    priority: int
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
 ```
 
 ### 项目路径约定

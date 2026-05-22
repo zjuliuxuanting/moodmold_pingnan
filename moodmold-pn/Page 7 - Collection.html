@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moodmold · 豆豆的屏南收藏</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+
+  <style>
+    /* ============================================================
+       Desk + iPhone chrome (shared)
+       ============================================================ */
+    body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(232,239,235,0.45) 0%, transparent 55%),
+        var(--color-primary-bg);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 24px;
+    }
+    .desk { display: flex; gap: 64px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .desk-meta { max-width: 280px; font-family: var(--font-sans); }
+    .desk-meta .edition {
+      font-family: var(--font-en-serif); font-style: italic; font-size: 15px;
+      color: var(--color-accent-wood); letter-spacing: 0.02em; margin-bottom: 8px;
+    }
+    .desk-meta h1 {
+      font-family: var(--font-serif); font-size: 32px; font-weight: 600;
+      line-height: 1.3; margin: 0 0 16px;
+    }
+    .desk-meta p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin: 0 0 12px; }
+    .desk-meta .spec {
+      margin-top: 24px; padding-top: 18px;
+      border-top: 1px solid var(--color-border-light);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px; color: var(--color-text-tertiary);
+      letter-spacing: 0.06em; line-height: 1.8;
+    }
+
+    .iphone {
+      width: 393px; height: 852px;
+      background: #1a1a1a; border-radius: 54px; padding: 11px;
+      box-shadow: var(--shadow-lift), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative; flex-shrink: 0;
+    }
+    .iphone::after { content: ""; position: absolute; left: -2px; top: 180px; width: 3px; height: 60px; background: #2a2a2a; border-radius: 2px; }
+    .iphone .screen {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      border-radius: 44px; overflow: hidden; position: relative;
+    }
+    .iphone .notch {
+      position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px; background: #1a1a1a; border-radius: 20px; z-index: 50;
+    }
+    .iphone .statusbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 54px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 28px 0;
+      font-family: var(--font-en-sans); font-size: 15px; font-weight: 600;
+      color: var(--color-text-primary); z-index: 40; pointer-events: none;
+    }
+    .iphone .statusbar .icons { display: inline-flex; gap: 5px; align-items: center; }
+
+    /* ============================================================
+       Page transition
+       ============================================================ */
+    .screen-content {
+      position: absolute; inset: 0;
+      animation: pageEnter 400ms ease-out both;
+    }
+    @keyframes pageEnter { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+    .screen-content.is-leaving-back    { animation: pageLeaveBack    200ms ease-out forwards; }
+    .screen-content.is-leaving-forward { animation: pageLeaveForward 200ms ease-out forwards; }
+    @keyframes pageLeaveForward { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-8px); } }
+    @keyframes pageLeaveBack    { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(8px); } }
+
+    /* ============================================================
+       Scroll surface + page-level paper grain
+       ============================================================ */
+    .page-scroll {
+      width: 100%; height: 100%;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-top: 54px;
+      padding-bottom: 120px;
+      background: var(--color-primary-bg);
+      position: relative;
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+    .page-scroll::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.4  0 0 0 0 0.25  0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+      opacity: 0.05;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .page-scroll > * { position: relative; z-index: 1; }
+
+    /* ============================================================
+       Top nav
+       ============================================================ */
+    .topnav {
+      height: 56px; padding: 0 16px;
+      display: grid; grid-template-columns: 40px 1fr 40px; align-items: center;
+    }
+    .topnav .iconbtn {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-primary);
+      transition: background-color .15s ease;
+    }
+    .topnav .iconbtn:hover { background: rgba(62,58,54,0.06); }
+    .topnav .title {
+      text-align: center; font-family: var(--font-sans);
+      font-size: 16px; font-weight: 500; color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    /* ============================================================
+       Stats header — "2 / 4"
+       ============================================================ */
+    .stats {
+      margin-top: 32px;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .stats .ratio {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0;
+    }
+    .stats .ratio .have { color: var(--color-accent-wood); }
+    .stats .ratio .slash {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      font-size: 36px;
+      margin: 0 6px;
+      transform: translateY(-2px);
+    }
+    .stats .ratio .total { color: var(--color-text-tertiary); }
+    .stats .label {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-top: 10px;
+      letter-spacing: 0.02em;
+    }
+    .stats .label .em {
+      color: var(--color-accent-wood);
+      font-weight: 500;
+    }
+
+    /* Progress bar */
+    .pbar {
+      margin: 16px 48px 0;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(139,111,71,0.14);
+      overflow: hidden;
+      position: relative;
+    }
+    .pbar .fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--color-accent-wood) 0%, #A88560 100%);
+      border-radius: 3px;
+      position: relative;
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+    .pbar .fill::after {
+      /* tiny shimmer at the leading edge */
+      content: "";
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 8px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 244, 230, 0.6) 100%);
+    }
+
+    /* ============================================================
+       2-column collection grid · 165 × 220
+       ============================================================ */
+    .grid {
+      margin: 48px 24px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .cell {
+      aspect-ratio: 165 / 220;
+      border-radius: var(--r-card);
+      background: var(--color-card-bg);
+      box-shadow: var(--shadow-base);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .22s ease, box-shadow .22s ease;
+      display: flex;
+      flex-direction: column;
+      /* staggered entry */
+      animation: cellEnter 420ms ease-out both;
+      opacity: 0;
+    }
+    .grid .cell:nth-child(1) { animation-delay: 80ms;  }
+    .grid .cell:nth-child(2) { animation-delay: 160ms; }
+    .grid .cell:nth-child(3) { animation-delay: 240ms; }
+    .grid .cell:nth-child(4) { animation-delay: 320ms; }
+    @keyframes cellEnter {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0);   }
+    }
+    .cell:active { transform: scale(0.985); box-shadow: var(--shadow-soft); }
+
+    /* Top image area · 60% */
+    .cell .art {
+      flex: 0 0 60%;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, #F8F2E6 0%, #F1E8D5 100%);
+    }
+    .cell .art .canvas {
+      width: 100%; height: 100%;
+      display: block;
+    }
+    /* Day pill in corner of art */
+    .cell .day-pill {
+      position: absolute;
+      top: 8px; right: 8px;
+      height: 18px;
+      padding: 0 8px;
+      border-radius: var(--r-pill);
+      background: rgba(255,255,255,0.9);
+      display: inline-flex; align-items: center;
+      font-family: var(--font-en-sans);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.06em;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Bottom text area · 40% */
+    .cell .meta {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      justify-content: flex-start;
+    }
+    .cell .meta .kicker {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--color-accent-primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .cell .meta .name {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+    .cell .meta .sub {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+    }
+
+    /* Unlocked corner sparkle */
+    .cell.unlocked .corner-spark {
+      position: absolute;
+      top: 8px; left: 8px;
+      color: var(--color-accent-shimmer);
+      opacity: 0.85;
+    }
+
+    /* Locked variant */
+    .cell.locked {
+      background: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 1px 6px rgba(62,58,54,0.04);
+    }
+    .cell.locked .art {
+      background: linear-gradient(180deg, #ECE7DC 0%, #E5DECF 100%);
+      filter: grayscale(70%) blur(0.3px);
+    }
+    .cell.locked .art .canvas { opacity: 0.35; }
+    .cell.locked .day-pill {
+      background: rgba(255,255,255,0.85);
+      color: var(--color-text-tertiary);
+    }
+    .cell.locked .meta .kicker { color: var(--color-text-tertiary); letter-spacing: 0.1em; }
+    .cell.locked .meta .name { color: var(--color-text-tertiary); }
+    .cell.locked .meta .sub { color: var(--color-text-tertiary); opacity: 0.85; }
+
+    .cell.locked .lock-overlay {
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 60%; /* covers the art area */
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px;
+    }
+    .cell.locked .lock-overlay .lock-circle {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-tertiary);
+      box-shadow: 0 2px 8px rgba(62,58,54,0.08);
+    }
+    .cell.locked .lock-overlay .lock-label {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.04em;
+      background: rgba(245, 241, 234, 0.85);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    /* ============================================================
+       Footer text + button
+       ============================================================ */
+    .foot-text {
+      margin: 32px 32px 0;
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--color-text-secondary);
+    }
+    .foot-text .em {
+      color: var(--color-accent-wood);
+      font-weight: 500;
+    }
+
+    .footer {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 16px 24px 32px;
+      background: var(--color-primary-bg);
+      z-index: 25;
+    }
+    .footer::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: -24px; height: 24px;
+      background: linear-gradient(180deg, rgba(245,241,234,0) 0%, var(--color-primary-bg) 100%);
+      pointer-events: none;
+    }
+    .footer .btn {
+      width: 100%;
+      box-shadow: 0 6px 20px rgba(107,142,127,0.28);
+    }
+
+    /* ============================================================
+       Toast
+       ============================================================ */
+    .toast {
+      position: absolute;
+      left: 50%; top: 100px;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(62, 58, 54, 0.92);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 90;
+      box-shadow: var(--shadow-lift);
+    }
+    .toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       Detail overlay (unlocked card → modal)
+       ============================================================ */
+    .overlay-mask {
+      position: absolute; inset: 0;
+      background: rgba(62, 58, 54, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      pointer-events: none;
+      transition: background-color .3s ease, backdrop-filter .3s ease;
+      z-index: 60;
+    }
+    .overlay-mask.is-open {
+      background: rgba(62, 58, 54, 0.42);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      pointer-events: auto;
+    }
+
+    .overlay-card-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 32px;
+      z-index: 61;
+      pointer-events: none;
+    }
+    .overlay-card-wrap.is-open { pointer-events: auto; }
+
+    .overlay-card {
+      width: 100%;
+      max-width: 280px;
+      background: linear-gradient(160deg, #FBF7EE 0%, #F5EFE6 55%, #EFE6D2 100%);
+      border-radius: 24px;
+      border: 1.5px solid var(--color-accent-wood);
+      box-shadow: 0 20px 50px rgba(62,58,54,0.25), 0 4px 10px rgba(62,58,54,0.10);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.84) translateY(20px);
+      transition: opacity .3s ease, transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .overlay-card-wrap.is-open .overlay-card { opacity: 1; transform: scale(1) translateY(0); }
+    /* paper grain in overlay */
+    .overlay-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.22  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+      opacity: 0.16;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      border-radius: inherit;
+      z-index: 1;
+    }
+    .overlay-card::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 0.75px solid var(--color-accent-wood);
+      border-radius: 17px;
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .overlay-card .close-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      border: 0;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      z-index: 4;
+      transition: background-color .15s ease, color .15s ease;
+    }
+    .overlay-card .close-btn:hover {
+      background: #fff;
+      color: var(--color-text-primary);
+    }
+
+    .overlay-card .ov-band {
+      width: 100%; height: 8px;
+      background: var(--color-accent-wood);
+      position: relative;
+    }
+    .overlay-card .ov-band::before,
+    .overlay-card .ov-band::after {
+      content: "";
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #FBF7EE;
+      border: 1px solid var(--color-accent-wood);
+    }
+    .overlay-card .ov-band::before { left: 18px; }
+    .overlay-card .ov-band::after  { right: 18px; }
+
+    .overlay-card .ov-body {
+      padding: 24px 24px 24px;
+      display: flex; flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative; z-index: 2;
+    }
+    .overlay-card .ov-art {
+      width: 168px; height: 168px;
+      border-radius: var(--r-card);
+      background:
+        radial-gradient(circle at 30% 25%, #FFF9EE 0%, #F5EFE6 60%, #EFE1C5 100%);
+      border: 1px solid rgba(139,111,71,0.35);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 1px 4px rgba(255,255,255,0.6);
+      overflow: hidden;
+    }
+    .overlay-card .ov-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+    }
+    .overlay-card .ov-sub {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.02em;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .overlay-card .ov-divider {
+      width: 60px; height: 1px;
+      background: var(--color-accent-wood);
+      opacity: 0.5;
+      margin: 6px 0 2px;
+    }
+    .overlay-card .ov-desc {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      text-align: center;
+      padding: 0 4px;
+    }
+    .overlay-card .ov-stamp {
+      margin-top: 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--color-accent-wood);
+      opacity: 0.7;
+    }
+
+    /* ============================================================
+       Mobile fallback
+       ============================================================ */
+    @media (max-width: 880px) {
+      body { padding: 0; align-items: stretch; }
+      .desk { gap: 0; }
+      .desk-meta { display: none; }
+      .iphone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
+      .iphone::after { display: none; }
+      .iphone .screen { border-radius: 0; }
+      .iphone .notch { display: none; }
+      .iphone .statusbar { display: none; }
+      .page-scroll { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="desk">
+
+    <aside class="desk-meta">
+      <div class="edition">Page 07 · Collection</div>
+      <h1>「豆豆的<br/>屏南纪念册。」</h1>
+      <p>像旅行青蛙的纪念品柜:4 张非遗变装卡,Day 1 和 Day 3 已解锁,Day 5 与 Day 7 仍是剪影。点击已解锁卡片弹出放大查看。</p>
+      <p>每张卡都是一件被珍重摆放的物件,不是一行 list item。</p>
+      <div class="spec">
+        iPhone 15 · 393 × 852<br/>
+        DESIGN TOKENS · v0.1<br/>
+        2026 · 05 · 22
+      </div>
+    </aside>
+
+    <div class="iphone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="18" height="11" viewBox="0 0 18 11"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5C5 2.5 2.3 3.7.5 5.5L2 7C3.6 5.4 5.7 4.5 8 4.5s4.4.9 6 2.5l1.5-1.5C13.7 3.7 11 2.5 8 2.5zM8 6.5c-1.4 0-2.7.5-3.7 1.5L8 11l3.7-3c-1-1-2.3-1.5-3.7-1.5z" fill="currentColor"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12">
+              <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/>
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/>
+              <rect x="23" y="4" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="toast" id="toast">敬请期待</div>
+
+        <!-- Overlay: detail modal -->
+        <div class="overlay-mask" id="overlay-mask"></div>
+        <div class="overlay-card-wrap" id="overlay-wrap">
+          <article class="overlay-card" id="overlay-card">
+            <button class="close-btn" id="overlay-close" title="关闭">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+            <div class="ov-band"></div>
+            <div class="ov-body">
+              <div class="ov-art" id="ov-art"><!-- filled by JS --></div>
+              <div class="ov-name" id="ov-name"></div>
+              <div class="ov-sub" id="ov-sub"></div>
+              <div class="ov-divider"></div>
+              <div class="ov-desc" id="ov-desc"></div>
+              <div class="ov-stamp" id="ov-stamp"></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="screen-content" id="screen-content" data-screen-label="07 Collection">
+          <div class="page-scroll">
+
+            <!-- Top nav -->
+            <nav class="topnav">
+              <div class="iconbtn" id="back-btn" title="返回">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </div>
+              <div class="title">豆豆的屏南收藏</div>
+              <div></div>
+            </nav>
+
+            <!-- Stats -->
+            <section class="stats">
+              <div class="ratio">
+                <span class="have">2</span><span class="slash">/</span><span class="total">4</span>
+              </div>
+              <div class="label">已解锁屏南<span class="em">非遗变装</span></div>
+            </section>
+            <div class="pbar"><div class="fill"></div></div>
+
+            <!-- 2-column grid -->
+            <section class="grid">
+
+              <!-- ============ Card 1 · 通行证 (unlocked) ============ -->
+              <article class="cell unlocked" data-key="passport">
+                <svg class="corner-spark" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 3 L13.2 9 L19 10.5 L13.2 12 L12 18 L10.8 12 L5 10.5 L10.8 9 Z"/>
+                </svg>
+                <div class="art">
+                  <span class="day-pill">DAY 1</span>
+                  <svg class="canvas" viewBox="0 0 165 132" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="psBg" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#FBF7EE"/>
+                        <stop offset="100%" stop-color="#F0E8D8"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="165" height="132" fill="url(#psBg)"/>
+                    <!-- mini pass card centered, lifted -->
+                    <g transform="translate(82.5,66)">
+                      <!-- card body -->
+                      <rect x="-36" y="-44" width="72" height="86" rx="6" fill="#FBF7EE" stroke="#8B6F47" stroke-width="1"/>
+                      <!-- inner double border -->
+                      <rect x="-32" y="-40" width="64" height="78" rx="4" fill="none" stroke="#8B6F47" stroke-width="0.4" opacity="0.5"/>
+                      <!-- wood band -->
+                      <rect x="-36" y="-44" width="72" height="5" fill="#8B6F47"/>
+                      <circle cx="-26" cy="-41.5" r="1.5" fill="#FBF7EE" stroke="#8B6F47" stroke-width="0.5"/>
+                      <circle cx="26" cy="-41.5" r="1.5" fill="#FBF7EE" stroke="#8B6F47" stroke-width="0.5"/>
+                      <!-- mini pill -->
+                      <rect x="-18" y="-32" width="36" height="6" rx="3" fill="#E8EFEB"/>
+                      <!-- name -->
+                      <text x="0" y="-18" font-family="Noto Serif SC, serif" font-size="11" font-weight="700" fill="#3E3A36" text-anchor="middle" letter-spacing="0.8">豆豆</text>
+                      <!-- photo circle -->
+                      <circle cx="0" cy="4" r="13" fill="#D6A878" stroke="#8B6F47" stroke-width="0.8"/>
+                      <!-- mini cat face on photo -->
+                      <g>
+                        <path d="M-7 -1 L-9 -5 L-5 -3 Z" fill="#A3784C"/>
+                        <path d="M7 -1 L9 -5 L5 -3 Z" fill="#A3784C"/>
+                        <circle cx="-3" cy="2" r="0.8" fill="#3E3A36"/>
+                        <circle cx="3" cy="2" r="0.8" fill="#3E3A36"/>
+                        <path d="M-0.6 4 L0.6 4 L0 5 Z" fill="#8B5A3C"/>
+                      </g>
+                      <!-- info dashes -->
+                      <line x1="-20" y1="24" x2="20" y2="24" stroke="#B0A89D" stroke-width="0.5" opacity="0.7"/>
+                      <line x1="-16" y1="28" x2="16" y2="28" stroke="#B0A89D" stroke-width="0.5" opacity="0.5"/>
+                      <!-- 印 stamp tilted -->
+                      <g transform="translate(22,18) rotate(-8)">
+                        <rect x="-5" y="-5" width="10" height="10" fill="none" stroke="#B8542F" stroke-width="0.7" opacity="0.75"/>
+                        <text x="0" y="3" font-family="Noto Serif SC, serif" font-size="7" font-weight="700" fill="#B8542F" text-anchor="middle" opacity="0.8">印</text>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <div class="kicker">Day 1 解锁</div>
+                  <div class="name">屏南通行证</div>
+                  <div class="sub">客籍登记 · YF-001 接待</div>
+                </div>
+              </article>
+
+              <!-- ============ Card 2 · 廊桥小斗笠 (unlocked, shimmer) ============ -->
+              <article class="cell unlocked" data-key="hat">
+                <svg class="corner-spark" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 3 L13.2 9 L19 10.5 L13.2 12 L12 18 L10.8 12 L5 10.5 L10.8 9 Z"/>
+                </svg>
+                <div class="art">
+                  <span class="day-pill">DAY 3</span>
+                  <svg class="canvas" viewBox="0 0 165 132" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="htBg" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#F1E8D5"/>
+                        <stop offset="100%" stop-color="#E5D3A8"/>
+                      </linearGradient>
+                      <linearGradient id="hatGradMini" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#E8C598"/>
+                        <stop offset="60%" stop-color="#C49765"/>
+                        <stop offset="100%" stop-color="#8B5A3C"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="165" height="132" fill="url(#htBg)"/>
+                    <!-- afternoon halo behind -->
+                    <circle cx="125" cy="22" r="14" fill="#FFE9C0" opacity="0.55"/>
+
+                    <!-- cat torso below -->
+                    <g transform="translate(82.5,100)">
+                      <!-- body -->
+                      <ellipse cx="0" cy="0" rx="32" ry="22" fill="#D6A878"/>
+                      <!-- head -->
+                      <circle cx="0" cy="-22" r="20" fill="#D6A878"/>
+                      <!-- ears (under the hat — small triangle slivers visible at side) -->
+                      <path d="M-16 -36 L-20 -44 L-12 -38 Z" fill="#A3784C"/>
+                      <path d="M16 -36 L20 -44 L12 -38 Z" fill="#A3784C"/>
+                      <!-- face details -->
+                      <circle cx="-7" cy="-18" r="1.6" fill="#3E3A36"/>
+                      <circle cx="7" cy="-18" r="1.6" fill="#3E3A36"/>
+                      <path d="M-1.4 -12 L1.4 -12 L0 -10 Z" fill="#8B5A3C"/>
+                      <!-- mouth/cheek -->
+                      <path d="M-3 -9 Q-1 -7 0 -8" stroke="#8B5A3C" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                      <path d="M3 -9 Q1 -7 0 -8" stroke="#8B5A3C" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                      <!-- whiskers -->
+                      <g stroke="#3E3A36" stroke-width="0.5" stroke-linecap="round" opacity="0.7">
+                        <line x1="2" y1="-11" x2="14" y2="-12"/>
+                        <line x1="2" y1="-9" x2="14" y2="-8"/>
+                        <line x1="-2" y1="-11" x2="-14" y2="-12"/>
+                        <line x1="-2" y1="-9" x2="-14" y2="-8"/>
+                      </g>
+                    </g>
+
+                    <!-- 斗笠 sitting on the head -->
+                    <g transform="translate(82.5,52)">
+                      <!-- brim shadow -->
+                      <ellipse cx="0" cy="6" rx="38" ry="3" fill="#3E3A36" opacity="0.15"/>
+                      <!-- brim -->
+                      <ellipse cx="0" cy="4" rx="38" ry="5" fill="#C49765"/>
+                      <!-- cone -->
+                      <path d="M-38 4 Q0 -28 38 4 Q24 -2 0 -4 Q-24 -2 -38 4 Z" fill="url(#hatGradMini)"/>
+                      <!-- bamboo weave rings -->
+                      <g stroke="#6F4D2E" stroke-width="0.5" fill="none" opacity="0.6">
+                        <path d="M-34 2 Q0 -18 34 2"/>
+                        <path d="M-28 -2 Q0 -16 28 -2"/>
+                        <path d="M-22 -6 Q0 -16 22 -6"/>
+                      </g>
+                      <!-- ribs -->
+                      <g stroke="#6F4D2E" stroke-width="0.35" opacity="0.55">
+                        <line x1="0" y1="-26" x2="-30" y2="2"/>
+                        <line x1="0" y1="-26" x2="-15" y2="2"/>
+                        <line x1="0" y1="-26" x2="0" y2="2"/>
+                        <line x1="0" y1="-26" x2="15" y2="2"/>
+                        <line x1="0" y1="-26" x2="30" y2="2"/>
+                      </g>
+                      <!-- top knot -->
+                      <circle cx="0" cy="-26" r="1.6" fill="#6F4D2E"/>
+                      <!-- red strings on both sides -->
+                      <path d="M-32 6 Q-30 16 -26 22" stroke="#B85431" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                      <path d="M32 6 Q30 16 26 22" stroke="#B85431" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- sparkles -->
+                    <g fill="#C4915C" opacity="0.7">
+                      <path d="M28 30 L29 34 L33 35 L29 36 L28 40 L27 36 L23 35 L27 34 Z"/>
+                      <path d="M142 60 L143 63 L146 64 L143 65 L142 68 L141 65 L138 64 L141 63 Z" opacity="0.55"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <div class="kicker">Day 3 解锁</div>
+                  <div class="name">廊桥小斗笠</div>
+                  <div class="sub">非遗 · 木拱桥营造</div>
+                </div>
+              </article>
+
+              <!-- ============ Card 3 · 古厝戏服 (locked) ============ -->
+              <article class="cell locked" data-key="opera">
+                <div class="art">
+                  <span class="day-pill">DAY 5</span>
+                  <svg class="canvas" viewBox="0 0 165 132" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <!-- ghost silhouette of an 戏服 / 蟒袍 — folded square with sleeves -->
+                    <g transform="translate(82.5,72)">
+                      <!-- body -->
+                      <path d="M-22 -14 L-22 22 L22 22 L22 -14 Q22 -22 14 -22 L-14 -22 Q-22 -22 -22 -14 Z" fill="#A89678"/>
+                      <!-- sleeves -->
+                      <ellipse cx="-26" cy="-2" rx="10" ry="14" fill="#A89678"/>
+                      <ellipse cx="26" cy="-2" rx="10" ry="14" fill="#A89678"/>
+                      <!-- collar V -->
+                      <path d="M-10 -20 L0 -8 L10 -20 Z" fill="#8B7558"/>
+                      <!-- belt -->
+                      <rect x="-22" y="-2" width="44" height="3" fill="#8B7558"/>
+                      <!-- mask hint above -->
+                      <ellipse cx="0" cy="-30" rx="10" ry="8" fill="#A89678" opacity="0.85"/>
+                    </g>
+                  </svg>
+                  <div class="lock-overlay">
+                    <div class="lock-circle">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="11" width="14" height="10" rx="2"/>
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                      </svg>
+                    </div>
+                    <div class="lock-label">Day 5 解锁</div>
+                  </div>
+                </div>
+                <div class="meta">
+                  <div class="kicker">DAY 5</div>
+                  <div class="name">古厝戏服?</div>
+                  <div class="sub">敬请期待</div>
+                </div>
+              </article>
+
+              <!-- ============ Card 4 · 屏南荣誉村猫 (locked) ============ -->
+              <article class="cell locked" data-key="honor">
+                <div class="art">
+                  <span class="day-pill">DAY 7</span>
+                  <svg class="canvas" viewBox="0 0 165 132" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <!-- silhouette of a medal / honor card -->
+                    <g transform="translate(82.5,66)">
+                      <!-- rosette -->
+                      <circle cx="0" cy="-2" r="18" fill="#A89678"/>
+                      <circle cx="0" cy="-2" r="10" fill="#8B7558"/>
+                      <!-- ribbons left/right -->
+                      <path d="M-14 14 L-18 32 L-10 26 L-4 32 L-2 14 Z" fill="#A89678"/>
+                      <path d="M14 14 L18 32 L10 26 L4 32 L2 14 Z" fill="#A89678"/>
+                    </g>
+                  </svg>
+                  <div class="lock-overlay">
+                    <div class="lock-circle">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="11" width="14" height="10" rx="2"/>
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                      </svg>
+                    </div>
+                    <div class="lock-label">Day 7 解锁</div>
+                  </div>
+                </div>
+                <div class="meta">
+                  <div class="kicker">DAY 7</div>
+                  <div class="name">屏南荣誉村猫?</div>
+                  <div class="sub">终极纪念卡</div>
+                </div>
+              </article>
+
+            </section>
+
+            <!-- Footer copy -->
+            <p class="foot-text">
+              每解锁一张卡片,<br/>
+              豆豆和屏南的关系就<span class="em">更近一步</span>。<br/>
+              寄养结束时,有福会送你最后一张。
+            </p>
+
+          </div><!-- /page-scroll -->
+
+          <div class="footer">
+            <button class="btn btn--primary" id="back-to-diary">回到日记本</button>
+          </div>
+
+        </div><!-- /screen-content -->
+
+      </div><!-- /screen -->
+    </div><!-- /iphone -->
+  </div><!-- /desk -->
+
+  <script>
+    (function () {
+      const sc           = document.getElementById('screen-content');
+      const back         = document.getElementById('back-btn');
+      const backToDiary  = document.getElementById('back-to-diary');
+      const cells        = document.querySelectorAll('.cell');
+      const toast        = document.getElementById('toast');
+      const overlayMask  = document.getElementById('overlay-mask');
+      const overlayWrap  = document.getElementById('overlay-wrap');
+      const overlayClose = document.getElementById('overlay-close');
+      const ovArt        = document.getElementById('ov-art');
+      const ovName       = document.getElementById('ov-name');
+      const ovSub        = document.getElementById('ov-sub');
+      const ovDesc       = document.getElementById('ov-desc');
+      const ovStamp      = document.getElementById('ov-stamp');
+
+      // Pre-built detail SVGs to clone into the overlay's larger art frame
+      const details = {
+        passport: {
+          name: '屏南通行证',
+          sub: 'Day 1 · 客籍登记',
+          desc: '由有福(YF-001)亲自接待登记。\n这是豆豆在屏南的第一份身份证明。',
+          stamp: 'YF-2026-023',
+          art: `<svg viewBox="0 0 168 168" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="ovPsBg" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#FBF7EE"/>
+                <stop offset="100%" stop-color="#F0E8D8"/>
+              </linearGradient>
+            </defs>
+            <rect x="32" y="14" width="104" height="140" rx="8" fill="url(#ovPsBg)" stroke="#8B6F47" stroke-width="1.2"/>
+            <rect x="36" y="18" width="96" height="132" rx="5" fill="none" stroke="#8B6F47" stroke-width="0.4" opacity="0.5"/>
+            <!-- wood band -->
+            <rect x="32" y="14" width="104" height="6" fill="#8B6F47"/>
+            <circle cx="44" cy="17" r="1.6" fill="#FBF7EE" stroke="#8B6F47" stroke-width="0.5"/>
+            <circle cx="124" cy="17" r="1.6" fill="#FBF7EE" stroke="#8B6F47" stroke-width="0.5"/>
+            <!-- pill -->
+            <rect x="60" y="30" width="48" height="9" rx="4.5" fill="#E8EFEB"/>
+            <text x="84" y="36.5" font-family="Noto Sans SC, sans-serif" font-size="5.5" font-weight="500" fill="#6B8E7F" text-anchor="middle" letter-spacing="0.4">屏南龙潭村客籍</text>
+            <text x="84" y="50" font-family="Noto Serif SC, serif" font-size="14" font-weight="700" fill="#3E3A36" text-anchor="middle" letter-spacing="1.2">豆豆</text>
+            <text x="84" y="60" font-family="Noto Sans SC, sans-serif" font-size="6" fill="#8B847C" text-anchor="middle">第 023 号寄养通行证</text>
+            <!-- photo -->
+            <circle cx="84" cy="86" r="18" fill="#D6A878" stroke="#8B6F47" stroke-width="1"/>
+            <g>
+              <path d="M76 80 L73 73 L80 76 Z" fill="#A3784C"/>
+              <path d="M92 80 L95 73 L88 76 Z" fill="#A3784C"/>
+              <circle cx="79" cy="86" r="1" fill="#3E3A36"/>
+              <circle cx="89" cy="86" r="1" fill="#3E3A36"/>
+              <path d="M83.2 90 L84.8 90 L84 91.2 Z" fill="#8B5A3C"/>
+            </g>
+            <!-- profile lines -->
+            <line x1="56" y1="116" x2="112" y2="116" stroke="#D8D2C5" stroke-width="0.6"/>
+            <line x1="56" y1="124" x2="100" y2="124" stroke="#D8D2C5" stroke-width="0.6"/>
+            <text x="56" y="140" font-family="Noto Sans SC, sans-serif" font-size="5.5" fill="#B0A89D">2026.05.25 — 05.31</text>
+            <!-- 印 stamp -->
+            <g transform="translate(118,116) rotate(-8)">
+              <rect x="-9" y="-9" width="18" height="18" fill="none" stroke="#B8542F" stroke-width="0.9" opacity="0.75"/>
+              <text x="0" y="5" font-family="Noto Serif SC, serif" font-size="13" font-weight="700" fill="#B8542F" text-anchor="middle" opacity="0.78">印</text>
+            </g>
+          </svg>`
+        },
+        hat: {
+          name: '廊桥小斗笠',
+          sub: 'Day 3 · 万安廊桥赠',
+          desc: '屏南木拱桥营造技艺 · 国家级非遗。\n在桥上戴了 5 分钟,溪水声里换下来。',
+          stamp: '屏南 · 非遗 · 023',
+          art: `<svg viewBox="0 0 168 168" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="ovHat" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#E8C598"/>
+                <stop offset="60%" stop-color="#C49765"/>
+                <stop offset="100%" stop-color="#8B5A3C"/>
+              </linearGradient>
+            </defs>
+            <!-- afternoon halo behind -->
+            <circle cx="124" cy="40" r="20" fill="#FFE9C0" opacity="0.55"/>
+
+            <!-- cat torso lower -->
+            <g transform="translate(84,128)">
+              <ellipse cx="0" cy="0" rx="44" ry="28" fill="#D6A878"/>
+              <circle cx="0" cy="-30" r="26" fill="#D6A878"/>
+              <!-- side ears -->
+              <path d="M-21 -48 L-26 -58 L-16 -50 Z" fill="#A3784C"/>
+              <path d="M21 -48 L26 -58 L16 -50 Z" fill="#A3784C"/>
+              <!-- eyes -->
+              <circle cx="-9" cy="-25" r="2.2" fill="#3E3A36"/>
+              <circle cx="9" cy="-25" r="2.2" fill="#3E3A36"/>
+              <circle cx="-8" cy="-26" r="0.6" fill="#fff"/>
+              <circle cx="10" cy="-26" r="0.6" fill="#fff"/>
+              <!-- nose -->
+              <path d="M-1.6 -17 L1.6 -17 L0 -15 Z" fill="#8B5A3C"/>
+              <!-- mouth -->
+              <path d="M-3 -13 Q-1 -10 0 -12" stroke="#8B5A3C" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <path d="M3 -13 Q1 -10 0 -12" stroke="#8B5A3C" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <!-- whiskers -->
+              <g stroke="#3E3A36" stroke-width="0.6" stroke-linecap="round" opacity="0.7">
+                <line x1="3" y1="-15" x2="18" y2="-16"/>
+                <line x1="3" y1="-13" x2="18" y2="-12"/>
+                <line x1="-3" y1="-15" x2="-18" y2="-16"/>
+                <line x1="-3" y1="-13" x2="-18" y2="-12"/>
+              </g>
+            </g>
+
+            <!-- 斗笠 -->
+            <g transform="translate(84,64)">
+              <ellipse cx="0" cy="9" rx="50" ry="5" fill="#3E3A36" opacity="0.15"/>
+              <ellipse cx="0" cy="6" rx="50" ry="6" fill="#C49765"/>
+              <path d="M-50 6 Q0 -36 50 6 Q32 -2 0 -5 Q-32 -2 -50 6 Z" fill="url(#ovHat)"/>
+              <g stroke="#6F4D2E" stroke-width="0.65" fill="none" opacity="0.6">
+                <path d="M-44 4 Q0 -24 44 4"/>
+                <path d="M-36 -1 Q0 -22 36 -1"/>
+                <path d="M-28 -6 Q0 -22 28 -6"/>
+              </g>
+              <g stroke="#6F4D2E" stroke-width="0.45" opacity="0.55">
+                <line x1="0" y1="-34" x2="-40" y2="4"/>
+                <line x1="0" y1="-34" x2="-20" y2="4"/>
+                <line x1="0" y1="-34" x2="0" y2="4"/>
+                <line x1="0" y1="-34" x2="20" y2="4"/>
+                <line x1="0" y1="-34" x2="40" y2="4"/>
+              </g>
+              <circle cx="0" cy="-34" r="2.2" fill="#6F4D2E"/>
+              <path d="M-42 8 Q-40 22 -34 30" stroke="#B85431" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+              <path d="M42 8 Q40 22 34 30" stroke="#B85431" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+              <circle cx="-34" cy="30" r="2" fill="#B85431"/>
+              <circle cx="34" cy="30" r="2" fill="#B85431"/>
+            </g>
+
+            <!-- sparkles -->
+            <g fill="#C4915C" opacity="0.75">
+              <path d="M28 26 L29.4 31 L34 32 L29.4 33 L28 38 L26.6 33 L22 32 L26.6 31 Z"/>
+              <path d="M148 92 L149 96 L153 97 L149 98 L148 102 L147 98 L143 97 L147 96 Z" opacity="0.55"/>
+            </g>
+          </svg>`
+        }
+      };
+
+      let toastTimer;
+      function showToast(msg, ms) {
+        toast.textContent = msg;
+        toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('is-visible'), ms || 1500);
+      }
+
+      // Back → Page 6
+      back.addEventListener('click', () => {
+        sc.classList.add('is-leaving-back');
+        setTimeout(() => { window.location.href = 'Page 6 - Diary Detail.html'; }, 200);
+      });
+      // CTA → diary list (Page 5)
+      backToDiary.addEventListener('click', () => {
+        sc.classList.add('is-leaving-back');
+        setTimeout(() => { window.location.href = 'Page 5 - Diary List.html'; }, 200);
+      });
+
+      function openOverlay(key) {
+        const d = details[key];
+        if (!d) return;
+        ovArt.innerHTML  = d.art;
+        ovName.textContent  = d.name;
+        ovSub.textContent   = d.sub;
+        ovDesc.textContent  = d.desc;
+        ovStamp.textContent = d.stamp;
+        overlayMask.classList.add('is-open');
+        overlayWrap.classList.add('is-open');
+      }
+      function closeOverlay() {
+        overlayMask.classList.remove('is-open');
+        overlayWrap.classList.remove('is-open');
+      }
+
+      cells.forEach(cell => {
+        cell.addEventListener('click', () => {
+          if (cell.classList.contains('locked')) {
+            const day = cell.dataset.key === 'opera' ? 5 : 7;
+            showToast('Day ' + day + ' 解锁中…再陪豆豆几天');
+          } else {
+            openOverlay(cell.dataset.key);
+          }
+        });
+      });
+
+      overlayMask.addEventListener('click', closeOverlay);
+      overlayClose.addEventListener('click', closeOverlay);
+
+      // ESC to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeOverlay();
+      });
+    })();
+  </script>
+</body>
+</html>

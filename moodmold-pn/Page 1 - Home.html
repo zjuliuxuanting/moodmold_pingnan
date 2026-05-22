@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moodmold · 首页</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+
+  <style>
+    /* ============================================================
+       Desk — the surface we sit the phone on for design review
+       ============================================================ */
+    body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(232,239,235,0.45) 0%, transparent 55%),
+        var(--color-primary-bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+
+    .desk {
+      display: flex;
+      gap: 64px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .desk-meta {
+      max-width: 280px;
+      font-family: var(--font-sans);
+    }
+    .desk-meta .edition {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+    }
+    .desk-meta h1 {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0 0 16px;
+    }
+    .desk-meta p {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .desk-meta .spec {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--color-border-light);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.06em;
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+       iPhone 15 frame — 393 × 852
+       ============================================================ */
+    .iphone {
+      width: 393px;
+      height: 852px;
+      background: #1a1a1a;
+      border-radius: 54px;
+      padding: 11px;
+      box-shadow: var(--shadow-lift), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .iphone::after {
+      content: "";
+      position: absolute;
+      left: -2px; top: 180px;
+      width: 3px; height: 60px;
+      background: #2a2a2a;
+      border-radius: 2px;
+    }
+    .iphone .screen {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      border-radius: 44px;
+      overflow: hidden;
+      position: relative;
+    }
+    .iphone .notch {
+      position: absolute;
+      top: 11px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px;
+      background: #1a1a1a;
+      border-radius: 20px;
+      z-index: 50;
+    }
+    .iphone .statusbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 54px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px 0;
+      font-family: var(--font-en-sans);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      z-index: 40;
+      pointer-events: none;
+    }
+    .iphone .statusbar .icons {
+      display: inline-flex; gap: 5px; align-items: center;
+    }
+
+    /* ============================================================
+       Router — pages slide horizontally
+       ============================================================ */
+    .router {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .page-view {
+      position: absolute;
+      inset: 0;
+      transition: transform .42s cubic-bezier(.4,0,.2,1), opacity .42s ease;
+      will-change: transform, opacity;
+    }
+    .page-view.is-leaving {
+      transform: translateX(-15%);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .page-view.is-incoming {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    .page-view.is-active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .page-view.is-back {
+      transform: translateX(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       Page · scroll surface
+       ============================================================ */
+    .page-scroll {
+      width: 100%; height: 100%;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-top: 54px;     /* under status bar */
+      padding-bottom: 140px; /* leave room for fixed CTA */
+      background: var(--color-primary-bg);
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       Top nav · 56px · 左右 24px
+       ============================================================ */
+    .topnav {
+      height: 56px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+    }
+    .brand {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.02em;
+    }
+    .brand .dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--color-accent-primary);
+      vertical-align: middle;
+      margin: 0 6px 3px 4px;
+    }
+    .avatar-user {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--color-accent-cream);
+      border: 1px solid var(--color-border-light);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-text-tertiary);
+      font-family: var(--font-serif);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       Hero · ~320px
+       ============================================================ */
+    .hero {
+      height: 320px;
+      background: linear-gradient(180deg, #E8EFEB 0%, #F5F1EA 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 24px;
+      position: relative;
+    }
+    .hero::before {
+      /* very subtle paper grain */
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 18% 22%, rgba(107,142,127,0.07) 0%, transparent 40%),
+        radial-gradient(circle at 82% 78%, rgba(139,111,71,0.06) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .hero-photo-wrap {
+      position: relative;
+      width: 128px; height: 128px;
+    }
+    .hero-photo {
+      width: 128px; height: 128px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-accent-wood);
+      background:
+        radial-gradient(circle at 36% 32%, #f0d9b8 0%, #d6a877 45%, #a3784c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(139,111,71,0.18);
+    }
+    .hero-photo .placeholder {
+      font-family: var(--font-serif);
+      font-size: 13px;
+      color: rgba(255,255,255,0.92);
+      letter-spacing: 0.06em;
+      line-height: 1.4;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+    .hero-photo .placeholder .em {
+      display: block;
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: 0.1em;
+    }
+    .yf-tag {
+      position: absolute;
+      top: -6px; left: -10px;
+      height: 24px;
+      padding: 0 12px;
+      background: var(--color-accent-wood);
+      color: #fff;
+      border-radius: var(--r-pill);
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-en-sans);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      box-shadow: 0 2px 8px rgba(139,111,71,0.25);
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin: 24px 0 0;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+    .hero-sub {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .hero-sub .sep {
+      color: var(--color-text-tertiary);
+      margin: 0 6px;
+    }
+
+    /* small ornamental rule under hero */
+    .hero-ornament {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      color: var(--color-accent-wood);
+      opacity: 0.65;
+    }
+    .hero-ornament .line {
+      width: 24px; height: 1px;
+      background: currentColor;
+    }
+    .hero-ornament .glyph {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       Intro paragraph · 上下 32 / 左右 24
+       ============================================================ */
+    .intro {
+      padding: 32px 24px;
+    }
+    .intro h2 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin: 0 0 16px;
+      line-height: 1.4;
+    }
+    .intro p {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+    .intro p .accent {
+      color: var(--color-accent-wood);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       Benefit cards · 88px · gap 16
+       ============================================================ */
+    .benefits {
+      padding: 8px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .benefit {
+      height: 88px;
+      background: var(--color-card-bg);
+      border-radius: var(--r-card);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-base);
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .benefit:active {
+      transform: scale(0.99);
+      box-shadow: var(--shadow-soft);
+    }
+    .benefit .icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+    .benefit .icon-wrap.green  { background: var(--color-accent-primary); }
+    .benefit .icon-wrap.wood   { background: var(--color-accent-wood);    }
+    .benefit .icon-wrap.shimmer{ background: var(--color-accent-shimmer); }
+
+    .benefit .copy { flex: 1; min-width: 0; }
+    .benefit .copy .t {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+    }
+    .benefit .copy .d {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    .benefit .chev {
+      color: var(--color-text-tertiary);
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       Bottom CTA · 固定 96px
+       ============================================================ */
+    .cta {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 120px;
+      padding: 16px 24px 24px;
+      background: var(--color-primary-bg); /* fully opaque so the hint reads cleanly */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
+    }
+    .cta::before {
+      /* soft fade ABOVE the CTA so scrolling content dissolves into it */
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: -24px;
+      height: 24px;
+      background: linear-gradient(180deg, rgba(245,241,234,0) 0%, var(--color-primary-bg) 100%);
+      pointer-events: none;
+    }
+    .cta .hint {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.02em;
+    }
+    .cta .hint .dot {
+      display: inline-block;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--color-accent-primary);
+      vertical-align: middle;
+      margin: 0 8px 2px;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .cta .btn { width: 100%; box-shadow: 0 6px 20px rgba(107,142,127,0.28); }
+
+    /* spacer at bottom of page-scroll so content isn't hidden behind cta */
+    .bottom-spacer { height: 56px; }
+
+    /* ============================================================
+       Page 2 — placeholder
+       ============================================================ */
+    .page2 {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      padding: 64px 24px 48px;
+      display: flex;
+      flex-direction: column;
+    }
+    .page2 .back {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border-light);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-soft);
+    }
+    .page2 .placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 14px;
+    }
+    .page2 .placeholder .ed {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      color: var(--color-accent-wood);
+      font-size: 16px;
+    }
+    .page2 .placeholder h3 {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .page2 .placeholder p {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      max-width: 240px;
+      margin: 0;
+    }
+    .page2 .placeholder .frame {
+      width: 80px; height: 80px;
+      border-radius: 24px;
+      background: var(--color-accent-cream);
+      border: 1px dashed var(--color-accent-wood);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-accent-wood);
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    /* press feedback on cta */
+    .btn--primary { transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease; }
+    .btn--primary:active { transform: translateY(1px) scale(0.99); }
+
+    /* ============================================================
+       Mobile fallback (so the prototype is viewable on phone too)
+       ============================================================ */
+    @media (max-width: 880px) {
+      body { padding: 0; align-items: stretch; }
+      .desk { gap: 0; }
+      .desk-meta { display: none; }
+      .iphone {
+        width: 100vw; height: 100vh;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+      .iphone::after { display: none; }
+      .iphone .screen { border-radius: 0; }
+      .iphone .notch { display: none; }
+      .iphone .statusbar { display: none; }
+      .page-scroll { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="desk">
+
+    <!-- Sidebar caption for desktop review -->
+    <aside class="desk-meta">
+      <div class="edition">Page 01 · Home</div>
+      <h1>「你好,<br/>我是有福。」</h1>
+      <p>首次访问的城市宠主第一眼看到的页面。目标:在 10 秒内传递信任与温柔,然后让人按下"立即预约寄养"。</p>
+      <p>主按钮触发滑动过场,进入 Page 2(选民宿)。</p>
+      <div class="spec">
+        iPhone 15 · 393 × 852<br/>
+        DESIGN TOKENS · v0.1<br/>
+        2026 · 05 · 22
+      </div>
+    </aside>
+
+    <!-- Phone -->
+    <div class="iphone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <!-- status bar (always on top) -->
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="18" height="11" viewBox="0 0 18 11"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5C5 2.5 2.3 3.7.5 5.5L2 7C3.6 5.4 5.7 4.5 8 4.5s4.4.9 6 2.5l1.5-1.5C13.7 3.7 11 2.5 8 2.5zM8 6.5c-1.4 0-2.7.5-3.7 1.5L8 11l3.7-3c-1-1-2.3-1.5-3.7-1.5z" fill="currentColor"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12">
+              <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/>
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/>
+              <rect x="23" y="4" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- ===== Router ===== -->
+        <div class="router" id="router">
+
+          <!-- ===== Page 1 · Home ===== -->
+          <section class="page-view is-active" id="page-home" data-screen-label="01 Home">
+            <div class="page-scroll">
+
+              <!-- Top nav -->
+              <nav class="topnav">
+                <div class="brand">Moodmold<span class="dot"></span></div>
+                <div class="avatar-user" title="用户头像">客</div>
+              </nav>
+
+              <!-- Hero -->
+              <header class="hero">
+                <div class="hero-photo-wrap">
+                  <span class="yf-tag">YF-001</span>
+                  <div class="hero-photo">
+                    <div class="placeholder">
+                      <span class="em">有福</span>
+                      照片占位
+                    </div>
+                  </div>
+                </div>
+                <h1 class="hero-title">你好,我是有福</h1>
+                <div class="hero-sub">屏南龙潭村<span class="sep">·</span>首席体验官</div>
+                <div class="hero-ornament">
+                  <span class="line"></span>
+                  <span class="glyph">in 屏南</span>
+                  <span class="line"></span>
+                </div>
+              </header>
+
+              <!-- Intro paragraph -->
+              <section class="intro">
+                <h2>把你的猫,寄养到我们村里</h2>
+                <p>
+                  屏南海拔 <span class="accent">800 米</span>的古村,<br/>
+                  廊桥下、古厝旁——<br/>
+                  这里有山泉水、有阳光、<br/>
+                  有一只名叫有福的村猫,<br/>
+                  已经在等待你的客人。
+                </p>
+              </section>
+
+              <!-- Benefits -->
+              <section class="benefits">
+                <article class="benefit">
+                  <div class="icon-wrap green">
+                    <!-- envelope -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="6" width="18" height="13" rx="2"/>
+                      <path d="M3 8l9 6 9-6"/>
+                    </svg>
+                  </div>
+                  <div class="copy">
+                    <div class="t">每日有福日记</div>
+                    <div class="d">村猫视角的真实陪伴记录</div>
+                  </div>
+                  <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+                </article>
+
+                <article class="benefit">
+                  <div class="icon-wrap wood">
+                    <!-- gift -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3.5" y="10" width="17" height="10.5" rx="1.5"/>
+                      <path d="M2.5 7h19v3h-19z"/>
+                      <path d="M12 7v13.5"/>
+                      <path d="M12 7s-2-3.5-4-3.5S6 6 8 7"/>
+                      <path d="M12 7s2-3.5 4-3.5S18 6 16 7"/>
+                    </svg>
+                  </div>
+                  <div class="copy">
+                    <div class="t">屏南旅行纪念卡</div>
+                    <div class="d">寄养结束的数字纪念品</div>
+                  </div>
+                  <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+                </article>
+
+                <article class="benefit">
+                  <div class="icon-wrap shimmer">
+                    <!-- badge / rosette -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="9" r="5.5"/>
+                      <path d="M12 14.5l-2 7 2-1.5 2 1.5-2-7"/>
+                      <path d="M10 9l1.5 1.5L14 7.5"/>
+                    </svg>
+                  </div>
+                  <div class="copy">
+                    <div class="t">非遗变装解锁</div>
+                    <div class="d">廊桥斗笠、古厝戏服、村猫荣誉卡</div>
+                  </div>
+                  <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+                </article>
+              </section>
+
+              <div class="bottom-spacer"></div>
+            </div>
+
+            <!-- Fixed CTA -->
+            <div class="cta">
+              <div class="hint">首批 50 家认证民宿<span class="dot"></span>7 × 24 在线</div>
+              <button class="btn btn--primary" id="cta-book">立即预约寄养</button>
+            </div>
+          </section>
+
+
+        </div><!-- /router -->
+
+      </div><!-- /screen -->
+    </div><!-- /iphone -->
+
+  </div><!-- /desk -->
+
+  <script>
+    (function () {
+      const home = document.getElementById('page-home');
+      const cta  = document.getElementById('cta-book');
+
+      // CTA → fade-out + slide-left, then navigate to Page 2
+      cta.addEventListener('click', () => {
+        home.style.transition = 'opacity 200ms ease-out, transform 200ms ease-out';
+        home.style.opacity = '0';
+        home.style.transform = 'translateX(-8px)';
+        setTimeout(() => { window.location.href = 'Page 2 - Stay.html'; }, 200);
+      });
+
+      // Page enter animation on load — direction-aware (slide from right on first land, from left when returning)
+      const cameFromForward = document.referrer.indexOf('Page%202') !== -1 || document.referrer.indexOf('Page 2') !== -1;
+      home.style.opacity = '0';
+      home.style.transform = 'translateX(' + (cameFromForward ? '-24px' : '24px') + ')';
+      requestAnimationFrame(() => {
+        home.style.transition = 'opacity 400ms ease-out, transform 400ms ease-out';
+        home.style.opacity = '1';
+        home.style.transform = 'translateX(0)';
+      });
+    })();
+  </script>
+</body>
+</html>

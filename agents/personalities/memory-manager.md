@@ -14,8 +14,10 @@ tools: Read, Write, Glob, Grep
 
 ## 记忆存储位置
 
-- 项目级共享记忆：`agents/shared-memory/` 目录
-- 角色级记忆：各 Agent 的 `.md` 文件结束后的附加记忆区
+- 项目记忆文件位于 `agents/memory/` 目录下
+- 长期记忆（规范、原则、工作流）几乎不变
+- 项目记忆（技术决策、任务进度、已知问题）高频更新
+- 短期记忆（当前任务、会话日志）每个会话刷新
 
 ## 记忆管理原则
 
@@ -29,18 +31,17 @@ tools: Read, Write, Glob, Grep
 
 | 类别 | 说明 | 存储位置 | 示例 |
 |------|------|---------|------|
-| 用户偏好 | 用户的习惯、偏好设置 | `shared-memory/` | 用户喜欢 TypeScript |
-| 项目决策 | 技术选型、架构决策及原因 | `shared-memory/tech-decisions.md` | 选择 FastAPI 而非 Express |
-| 任务进度 | 当前任务完成状态 | `shared-memory/` | API 接口已完成 3/5 |
-| 已知问题 | Bug、待解决的技术债务 | `shared-memory/` | 登录接口偶发 500 错误 |
-| 文件结构 | 关键文件路径与模块依赖 | `shared-memory/` | 入口文件 src/index.ts |
-| 规则约束 | 用户设置的硬性规则 | `shared-memory/conventions.md` | 禁止使用 any 类型 |
+| 用户偏好 | 用户的习惯、偏好设置 | `project/` | 用户喜欢 TypeScript |
+| 项目决策 | 技术选型、架构决策及原因 | `project/tech-decisions.md` | 选择 FastAPI 而非 Express |
+| 任务进度 | 当前任务完成状态 | `project/task-progress.md` | API 接口已完成 3/5 |
+| 已知问题 | Bug、待解决的技术债务 | `project/known-issues.md` | 登录接口偶发 500 错误 |
+| 规则约束 | 用户设置的硬性规则 | `long-term/conventions.md` | 禁止使用 any 类型 |
 
 ## 操作指令
 
 ### 记忆写入 (Memory Write)
 
-当接收到需要记录的信息时，写入到 `agents/shared-memory/` 目录下的对应文件。
+当接收到需要记录的信息时，写入到 `agents/memory/project/` 目录下的对应文件。
 
 **写入规则：**
 - 只在信息是新的或与已有记忆不同时才写入
@@ -50,7 +51,7 @@ tools: Read, Write, Glob, Grep
 
 ### 记忆检索 (Memory Read)
 
-从 `agents/shared-memory/` 目录读取相关记忆文件。
+从 `agents/memory/` 目录读取相关记忆文件。
 
 ### 记忆修剪 (Memory Pruning)
 
