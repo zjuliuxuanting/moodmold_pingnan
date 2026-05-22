@@ -53,7 +53,7 @@
 
 #### B1 - 绑定页"检查中"状态显示空白页 [中等]
 
-- **文件**：[BindPage.tsx:L50-L52](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L50-L52)
+- **文件**：[BindPage.tsx:L50-L52](workspace/frontend/src/pages/BindPage.tsx#L50-L52)
 - **现象**：当 `uiState === 'checking'` 时，渲染 `<div className="min-h-screen bg-white" />`，一个全白空白页，用户看不到任何反馈
 - **触发条件**：进入 `/bind/:tagId` 的瞬间，React useEffect 尚未完成 localStorage 读取
 - **预期**：应显示加载指示器（spinner 或品牌 logo），而不是白屏
@@ -61,7 +61,7 @@
 
 #### B2 - 绑定页 /bind/ 无 tagId 时静默白屏 [中等]
 
-- **文件**：[BindPage.tsx:L15-L25](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L15-L25)
+- **文件**：[BindPage.tsx:L15-L25](workspace/frontend/src/pages/BindPage.tsx#L15-L25)
 - **现象**：访问 `/bind/`（无挂牌编号参数）时，tagId 为 undefined，useEffect 提前 return，uiState 保持 'checking'，页面显示空白
 - **触发条件**：手动输入或跳转到 `/bind/` 不带参数
 - **预期**：应显示"缺少挂牌编号"提示，或引导用户扫描正确的二维码
@@ -69,7 +69,7 @@
 
 #### B3 - 品牌动效中"连接中"文字动画未生效 [低]
 
-- **文件**：[index.css:L14-L18](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/index.css#L14-L18) vs [BindPage.tsx:L71](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L71)
+- **文件**：[index.css:L14-L18](workspace/frontend/src/index.css#L14-L18) vs [BindPage.tsx:L71](workspace/frontend/src/pages/BindPage.tsx#L71)
 - **现象**：CSS 定义了 `@keyframes connectingDots` 动画，但 BindPage 中使用的是静态文字 `<span>...</span>`，并未引用该动画
 - **预期**："正在建立连接"后的三个点应该有逐点出现的动画效果
 - **严重度**：低 — 视觉细节，不影响核心流程
@@ -93,7 +93,7 @@
 
 #### F3 - 缺少 404 路由处理 [中]
 
-- **位置**：[App.tsx:L12-L23](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/App.tsx#L12-L23)
+- **位置**：[App.tsx:L12-L23](workspace/frontend/src/App.tsx#L12-L23)
 - **现象**：Routes 中没有 `<Route path="*" element={...} />` 通配路由，任意无效路径会显示空白
 - **影响**：用户输错 URL 时看到空白页，不知道发生了什么
 - **建议**：添加 404 页面或重定向到首页
@@ -111,7 +111,7 @@
 
 #### F6 - "未找到宠物"页面缺少返回导航 [中]
 
-- **位置**：[PetPage.tsx:L73-L84](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/PetPage.tsx#L73-L84)、[HostUpdatePage.tsx:L82-L115](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostUpdatePage.tsx#L82-L115)
+- **位置**：[PetPage.tsx:L73-L84](workspace/frontend/src/pages/PetPage.tsx#L73-L84)、[HostUpdatePage.tsx:L82-L115](workspace/frontend/src/pages/HostUpdatePage.tsx#L82-L115)
 - **现象**：PetPage 未找到宠物时，只显示提示文字，没有回到首页或绑定页的按钮（HostUpdatePage 有"返回后台"链接，处理正确）
 - **影响**：用户进入错误挂牌编号后，只能通过浏览器后退，体验差
 
@@ -124,7 +124,7 @@
 
 #### D1 - 寄养天数"最少1天"可能造成误导 [低]
 
-- **文件**：[PetPage.tsx:L7-L10](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/PetPage.tsx#L7-L10)
+- **文件**：[PetPage.tsx:L7-L10](workspace/frontend/src/pages/PetPage.tsx#L7-L10)
 - **现象**：`Math.max(1, Math.floor(...))` 导致即使刚录入 1 秒钟，也显示"1天"
 - **建议**：考虑改为显示精确到小时，或者至少标注"第1天"而非"1天"
 
@@ -135,7 +135,7 @@
 
 #### D3 - 绑定页提交按钮仅校验名字 [低]
 
-- **文件**：[BindPage.tsx:L167](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L167)
+- **文件**：[BindPage.tsx:L167](workspace/frontend/src/pages/BindPage.tsx#L167)
 - **现象**：`disabled={!petName.trim()}` — 照片为选填，这可能是设计决策，但与看板"上传照片+填写名字"的表述不完全一致
 - **建议**：确认照片是否应为必填项
 
@@ -216,4 +216,4 @@ Moodmold 乡村寄养 H5 应用的 **存储层设计扎实**（15/15 通过）�
 ---
 
 > 测试工具：curl + Node.js 存储层模拟 + 代码审查 + 浏览器预览
-> 测试脚本：[qa_test.mjs](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/qa_test.mjs)、[qa_destructive.mjs](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/qa_destructive.mjs)
+> 测试脚本：[qa_test.mjs](workspace/frontend/qa_test.mjs)、[qa_destructive.mjs](workspace/frontend/qa_destructive.mjs)

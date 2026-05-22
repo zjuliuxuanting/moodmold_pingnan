@@ -22,7 +22,7 @@
 
 ### BUG-01: HostSubmittedPage.tsx 缺少 `useNavigate` 导入 — 运行时错误
 
-- **文件**: [HostSubmittedPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostSubmittedPage.tsx#L1-L7)
+- **文件**: [HostSubmittedPage.tsx](workspace/frontend/src/pages/HostSubmittedPage.tsx#L1-L7)
 - **行号**: L1, L7
 - **问题**: 第 1 行只导入 `{ useParams, Link }`，但第 7 行调用了 `useNavigate()`。`useNavigate` 未从 `react-router-dom` 导入，会导致 `ReferenceError: useNavigate is not defined`。
 - **复现步骤**: 托管方提交打卡 → 跳转到 `/host/submitted/:petId` → 页面白屏 + 控制台报错
@@ -38,14 +38,14 @@
 
 ### BUG-02: CollectionPage.tsx Toast 消息包含变量但未展示变量值
 
-- **文件**: [CollectionPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/CollectionPage.tsx#L271)
+- **文件**: [CollectionPage.tsx](workspace/frontend/src/pages/CollectionPage.tsx#L271)
 - **行号**: L271
 - **问题**: `showToast(`${item.name}尚未解锁，继续记录日记吧`)` — 使用了模板字符串拼接变量 `item.name`，但 Toast 组件在 L279-283 中正确使用了 `{toastMsg}` 渲染。此条无实际 bug，但需确认模板字符串在 minify 后仍正常工作（已知 React/TS 无此问题）。
 - **严重程度**: 已确认无问题, 标记为通过。
 
 ### BUG-03: BookPage.tsx Toast 消息硬编码, 丢失动态内容
 
-- **文件**: [BookPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BookPage.tsx#L88)
+- **文件**: [BookPage.tsx](workspace/frontend/src/pages/BookPage.tsx#L88)
 - **行号**: L40-L44 (showToast), L88 (toast 渲染)
 - **问题**: `showToast` 回调接收 `msg: string` 参数但完全忽略它——既不存储也不使用。Toast div 硬编码为:
   ```tsx
@@ -76,7 +76,7 @@
 
 ### BUG-04: PetPage.tsx `grid-cols-4` 导航区在 393px 下文字可能拥挤
 
-- **文件**: [PetPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/PetPage.tsx#L228)
+- **文件**: [PetPage.tsx](workspace/frontend/src/pages/PetPage.tsx#L228)
 - **行号**: L228-266
 - **问题**: 底部导航使用 `grid grid-cols-4 gap-1`，4 个按钮各有 `px-1 py-2` 的 pill 内边距，内含 16px SVG + `text-[10px]` 标签文字。在 345px 可用宽度下，每列约 83px。"纪念卡" 和 "通行证" 三个汉字在 10px 字号下约占 30px，加上 `px-1`(4px*2) 和 `border`(1px*2)，文字区域约 38px，放在 pill 形按钮内可能超出 pill 视觉边界，但不会溢出到相邻列。
 - **严重程度**: 一般 — 功能可用，视觉略紧但不会重叠
@@ -84,7 +84,7 @@
 
 ### BUG-05: HostPetsPage.tsx 消费者快捷入口 3 列网格中"寄养纪念卡"文本溢出风险
 
-- **文件**: [HostPetsPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostPetsPage.tsx#L300-L331)
+- **文件**: [HostPetsPage.tsx](workspace/frontend/src/pages/HostPetsPage.tsx#L300-L331)
 - **行号**: L300-L331
 - **问题**: `grid grid-cols-3 gap-1.5` 内含 5 个链接按钮，文字为"屏南日记"(4字)、"屏南收藏"(4字)、"寄养纪念卡"(5字)、"屏南通行证"(5字)、"变装打卡"(4字)。在 345px 可用宽度下，每列 = (345-3)/3 = 114px。每个按钮有 `py-1.5 px-1` + `border` + `rounded-pill`。"寄养纪念卡" 5 个字在 `text-xs` (12px) 下约占 60px，加上 2*4px padding + 2*1px border = 70px，在 114px 列宽内可以容纳。但若 border 有 2px 或用 `rounded-pill` 的 pill 形状使得可用文本区域变窄，可能在 pill 两端被截断。
 - **严重程度**: 一般 — 建议实际渲染验证
@@ -92,7 +92,7 @@
 
 ### BUG-06: HostMonthPage.tsx "山居民宿·屏南龙潭村" 长文本在窄屏下可能断行不当
 
-- **文件**: [HostMonthPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostMonthPage.tsx#L86-L88)
+- **文件**: [HostMonthPage.tsx](workspace/frontend/src/pages/HostMonthPage.tsx#L86-L88)
 - **行号**: L86-L88
 - **问题**:
   ```tsx
@@ -110,13 +110,13 @@
 
 ### SUG-01: 多处 Toast 使用 `whitespace-nowrap`，长消息会被截断
 
-- **文件**: [DiaryListPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/DiaryListPage.tsx#L386)、[DiaryDetailPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/DiaryDetailPage.tsx#L269)
+- **文件**: [DiaryListPage.tsx](workspace/frontend/src/pages/DiaryListPage.tsx#L386)、[DiaryDetailPage.tsx](workspace/frontend/src/pages/DiaryDetailPage.tsx#L269)
 - **问题**: DiaryListPage 和 DiaryDetailPage 的 Toast div 带有 `whitespace-nowrap` 类。当前 Toast 消息较短 ("链接已复制，分享给朋友吧"、"已收藏到你的闪闪时刻") 可容纳。但如果未来 toast 消息变长（如 "已分享豆豆的日记给朋友"），在 393px 屏幕上可能超出。同时 Toast 已有 `max-w-[84%]` 限制，`whitespace-nowrap` 会阻止换行导致文本超出 pill 背景。
 - **建议修复**: 移除 `whitespace-nowrap` 或改为 `break-words`。
 
 ### SUG-02: StayPage.tsx 价格区的 `whitespace-nowrap` 配合 `justify-between` 可能挤压民宿名称
 
-- **文件**: [StayPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/StayPage.tsx#L157-L161)
+- **文件**: [StayPage.tsx](workspace/frontend/src/pages/StayPage.tsx#L157-L161)
 - **行号**: L157-L161
 - **问题**:
   ```tsx
@@ -130,7 +130,7 @@
 
 ### SUG-03: HostCheckinPage.tsx 照片上传区 "上传第 N 张" 文案与 `grid-cols-3` 宽度适配
 
-- **文件**: [HostCheckinPage.tsx](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostCheckinPage.tsx#L274-L329)
+- **文件**: [HostCheckinPage.tsx](workspace/frontend/src/pages/HostCheckinPage.tsx#L274-L329)
 - **行号**: L274, L323-L325
 - **问题**: `grid grid-cols-3 gap-3`，每列 = (345-6)/3 = 113px。空状态时显示 `56px` 图标 + "上传第 1 张"(5字，text-base = 16px，约占 80px)。每个 cell 高度 116px，图标 56px + 文字 80px 宽度完全在 113px 列宽内，无溢出风险。已上传状态只显示小图标和删除按钮，亦无问题。
 - **结论**: 通过，无问题。

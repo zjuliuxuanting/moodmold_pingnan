@@ -55,9 +55,9 @@
 
 | Bug | 状态 | 验证证据 |
 |-----|------|---------|
-| **B1** - 绑定页"检查中"白屏 | **已修复** ✅ | [BindPage.tsx:L69-L76](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L69-L76) — 现在渲染 spinner + "正在检查绑定状态..." |
-| **B2** - /bind/ 无 tagId 白屏 | **已修复** ✅ | [BindPage.tsx:L50-L67](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L50-L67) — 现在显示"缺少挂牌编号" + "返回首页"按钮 |
-| **B3** - 品牌动效点动画未生效 | **已修复** ✅ | [BindPage.tsx:L96-L98](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L96-L98) — 三个 span 各自应用 dotPulse 动画，延迟 0s/0.2s/0.4s |
+| **B1** - 绑定页"检查中"白屏 | **已修复** ✅ | [BindPage.tsx:L69-L76](workspace/frontend/src/pages/BindPage.tsx#L69-L76) — 现在渲染 spinner + "正在检查绑定状态..." |
+| **B2** - /bind/ 无 tagId 白屏 | **已修复** ✅ | [BindPage.tsx:L50-L67](workspace/frontend/src/pages/BindPage.tsx#L50-L67) — 现在显示"缺少挂牌编号" + "返回首页"按钮 |
+| **B3** - 品牌动效点动画未生效 | **已修复** ✅ | [BindPage.tsx:L96-L98](workspace/frontend/src/pages/BindPage.tsx#L96-L98) — 三个 span 各自应用 dotPulse 动画，延迟 0s/0.2s/0.4s |
 
 ### 2.2 v1 功能缺失状态更新
 
@@ -75,20 +75,20 @@
 
 #### N1 - 宠物名字输入框无长度限制 [低]
 
-- **文件**：[BindPage.tsx:L181-L189](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L181-L189)
+- **文件**：[BindPage.tsx:L181-L189](workspace/frontend/src/pages/BindPage.tsx#L181-L189)
 - **现象**：`<input>` 没有 maxLength 属性，用户可以输入任意长名字。极端情况下超长 base64 照片 + 超长名字可能超出 localStorage 5MB 配额
 - **建议**：添加 maxLength={20} 或前端截断
 
 #### N2 - HostPage 已录入列表无空状态占位 [低]
 
-- **文件**：[HostPage.tsx:L82-L122](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostPage.tsx#L82-L122)
+- **文件**：[HostPage.tsx:L82-L122](workspace/frontend/src/pages/HostPage.tsx#L82-L122)
 - **现象**：pets.length === 0 时"已录入宠物"区域完全不渲染，页面下半部分空白
 - **预期**：应显示"暂无录入宠物，点击上方录入新宠物"引导文案
 - **对比**：HostUpdatePage 的时间线空状态处理得很好（图标+提示），HostPage 的空状态可以对齐这种做法
 
 #### N3 - 托管方更新页未找到宠物时无差异化处理 [低]
 
-- **文件**：[HostUpdatePage.tsx:L82-L115](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/HostUpdatePage.tsx#L82-L115)
+- **文件**：[HostUpdatePage.tsx:L82-L115](workspace/frontend/src/pages/HostUpdatePage.tsx#L82-L115)
 - **现象**：无论 pet 是 undefined（加载中）还是 null（未找到），都渲染"未找到宠物"卡片，但 undefined 应显示加载态
 - **影响**：在网络慢或设备慢时，用户会短暂看到"未找到宠物"然后立即切换到正常页面（闪烁）
 - **建议**：将 undefined 和 null 分开处理，undefined 显示加载指示器
@@ -156,7 +156,7 @@
 
 作为宠物主人，扫描挂牌二维码后被迫看 3 秒品牌动效。如果我是老用户、或者已经绑过这个挂牌编号（自动跳转时没有动效，但未绑定时每次都要等 3 秒），这个等待是强制的。
 
-**当前代码**：[BindPage.tsx:L22-L24](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/BindPage.tsx#L22-L24) — `setTimeout(() => setUIState('form'), 3000)` 无取消或跳过机制。
+**当前代码**：[BindPage.tsx:L22-L24](workspace/frontend/src/pages/BindPage.tsx#L22-L24) — `setTimeout(() => setUIState('form'), 3000)` 无取消或跳过机制。
 
 **建议**：动效区域加"跳过"文字链接，点击后直接进入表单。
 
@@ -164,7 +164,7 @@
 
 宠物主人输入错误的挂牌编号进入 `/pet/WRONG_ID`，看到"未找到宠物"提示后，只能通过浏览器后退按钮离开。
 
-**当前代码**：[PetPage.tsx:L73-L84](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/src/pages/PetPage.tsx#L73-L84) — 仅显示提示文字，无返回按钮。
+**当前代码**：[PetPage.tsx:L73-L84](workspace/frontend/src/pages/PetPage.tsx#L73-L84) — 仅显示提示文字，无返回按钮。
 
 **对比**：托管方的 HostUpdatePage 在同样场景下提供了"返回后台"+ "录入该宠物"两个出口。两个角色、同一场景，体验不一致。
 
@@ -206,4 +206,4 @@ Moodmold v2 在 v1 基础上修复了所有 3 个已发现 Bug，**全流程存�
 ---
 
 > 测试方法：代码审查（8 页面 + storage + types）+ 浏览器预览 + Node.js 编程式全流程测试（20 用例）+ 路由 curl 验证
-> 测试脚本：[qa_flow_test.mjs](file:///Applications/test/创业/毛孩儿/鸟类训练机/程序/行为学盒项目/黑客松/workspace/frontend/qa_flow_test.mjs)
+> 测试脚本：[qa_flow_test.mjs](workspace/frontend/qa_flow_test.mjs)
