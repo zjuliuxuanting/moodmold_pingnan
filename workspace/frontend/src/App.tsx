@@ -18,6 +18,7 @@ import HostUpdatePage from './pages/HostUpdatePage'
 import HostMonthPage from './pages/HostMonthPage'
 import HostRegisterPage from './pages/HostRegisterPage'
 import CheckinPage from './pages/CheckinPage'
+import QrPage from './pages/QrPage'
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/host/update/:petId" element={<HostUpdatePage />} />
         <Route path="/host/month" element={<HostMonthPage />} />
         <Route path="/checkin/:tagId" element={<CheckinPage />} />
+        <Route path="/qr" element={<QrPage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
     </PhoneFrame>

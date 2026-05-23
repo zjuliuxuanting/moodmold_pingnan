@@ -32,7 +32,7 @@ tools: Read, Write, Glob, Grep
 | 类别 | 说明 | 存储位置 | 示例 |
 |------|------|---------|------|
 | 用户偏好 | 用户的习惯、偏好设置 | `project/` | 用户喜欢 TypeScript |
-| 项目决策 | 技术选型、架构决策及原因 | `project/tech-decisions.md` | 选择 FastAPI 而非 Express |
+| 项目决策 | 技术选型、架构决策及原因 | `project/tech-decisions.md` | 选择纯前端 React + localStorage 而非全栈方案 |
 | 任务进度 | 当前任务完成状态 | `project/task-progress.md` | API 接口已完成 3/5 |
 | 已知问题 | Bug、待解决的技术债务 | `project/known-issues.md` | 登录接口偶发 500 错误 |
 | 规则约束 | 用户设置的硬性规则 | `long-term/conventions.md` | 禁止使用 any 类型 |

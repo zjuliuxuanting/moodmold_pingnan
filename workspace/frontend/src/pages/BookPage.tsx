@@ -191,7 +191,7 @@ export default function BookPage() {
         {/* Cat photo upload */}
         <section className="px-6 pt-8">
           <div className="font-[family-name:var(--font-serif)] text-lg font-medium text-text-primary leading-[1.4]">
-            你的猫
+            你的宠物
           </div>
           <div className="font-[family-name:var(--font-sans)] text-sm text-text-secondary mt-2 leading-[1.5]">
             推荐正面照,光线充足,背景简洁。
@@ -250,7 +250,7 @@ export default function BookPage() {
         {/* Cat info form */}
         <section className="px-6 pt-8">
           <div className="font-[family-name:var(--font-serif)] text-lg font-medium text-text-primary leading-[1.4]">
-            客猫档案
+            宠物档案
           </div>
 
           <div className="mt-4">
@@ -276,7 +276,7 @@ export default function BookPage() {
               type="text"
               value={breed}
               onChange={(e) => setBreed(e.target.value)}
-              placeholder="如: 橘猫 / 英短"
+              placeholder="如: 橘猫 / 柴犬"
               className="w-full h-[52px] px-4 rounded-input border border-border-light bg-white font-[family-name:var(--font-sans)] text-[15px] text-text-primary placeholder:text-text-tertiary outline-none focus:border-accent-primary transition-colors"
             />
           </div>

@@ -14,10 +14,10 @@ tools: Read, Write, Glob, Grep, RunCommand
 |------|------|
 | 框架 | React 18+ with TypeScript |
 | 构建工具 | Vite |
-| 样式方案 | Tailwind CSS |
-| 状态管理 | Zustand（全局状态）/ TanStack Query（服务端状态） |
+| 样式方案 | Tailwind CSS v4 |
+| 状态管理 | React Context + localStorage |
 | 路由 | React Router v6+ |
-| 组件库 | shadcn/ui（基于 Radix UI） |
+| 组件库 | 手写组件（无第三方 UI 库） |
 | 测试 | Vitest + React Testing Library |
 | 代码规范 | ESLint + Prettier |
 
@@ -25,8 +25,8 @@ tools: Read, Write, Glob, Grep, RunCommand
 
 - **核心框架**：React 18+ (Hooks, Context, Suspense)
 - **类型系统**：TypeScript 严格模式
-- **状态管理**：Zustand, TanStack Query, React Context
-- **样式方案**：Tailwind CSS, CSS Modules
+- **状态管理**：React Context, localStorage 封装
+- **样式方案**：Tailwind CSS v4, Design Token
 - **构建工具**：Vite
 - **性能优化**：Code Splitting, Lazy Loading, Memoization, Virtual Scrolling, Web Vitals
 - **测试**：Vitest, React Testing Library, Playwright
@@ -50,21 +50,21 @@ tools: Read, Write, Glob, Grep, RunCommand
 | 方面 | 必须确认 |
 |------|---------|
 | 框架 | React + Vite（已确定） |
-| 样式方案 | Tailwind CSS（已确定） |
-| 状态管理 | Zustand + TanStack Query（已确定） |
+| 样式方案 | Tailwind CSS v4（已确定） |
+| 状态管理 | React Context + localStorage（已确定） |
 | 路由 | React Router v6（已确定） |
 | 响应式 | 断点规格？（Mobile → Tablet → Desktop） |
 | 浏览器支持 | 需要兼容哪些浏览器版本？ |
 | 设计稿 | 有 Figma 设计稿？还是自由发挥？ |
-| 组件库 | shadcn/ui（已确定） |
-| API 契约 | 后端接口定义好了吗？（FastAPI → OpenAPI） |
+| 组件库 | 手写组件（已确定） |
+| 数据层 | localStorage 封装，无需后端接口 |
 
 ## 前端开发工作流
 
 ### 阶段 1：需求与设计确认
 - 理解组件/页面的功能和交互
-- 确认 API 接口格式和数据结构（从 `workspace/docs/api-spec.md` 读取）
-- 确认设计规范和组件库
+- 确认数据模型和 localStorage 数据结构（从 `workspace/frontend/src/types/` 读取）
+- 确认设计规范和 Design Token
 - → 如有不清晰 → **必须先提问**
 
 ### 阶段 2：组件设计
@@ -156,6 +156,5 @@ export type { ComponentNameProps };
 ## 协作接口
 
 - 从 PM Agent 获取 PRD → `workspace/docs/PRD.md`
-- 从后端获取 API 规范 → `workspace/docs/api-spec.md`
-- 从 Project Planner 获取开发计划 → 按计划步骤执行
 - 设计稿参考 → `workspace/docs/ui-ux/`
+- 数据模型定义 → `workspace/frontend/src/types/`

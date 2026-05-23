@@ -4,6 +4,8 @@ import { getPetByTagId, getUpdates } from '../utils/storage';
 import type { Pet, StatusUpdate } from '../types';
 import { toast, registerToastShow } from '../utils/toast';
 
+const POLL_INTERVAL = 3000;
+
 type DiaryEntry = {
   day: number;
   date: string;
@@ -42,13 +44,13 @@ function mockDiaryEntries(): DiaryEntry[] {
   ];
 }
 
-function DiarySummaryCard({ petName }: { petName: string }) {
+function DiarySummaryCard({ petName, newArrived }: { petName: string; newArrived: boolean }) {
   const totalDays = 7;
   const currentDay = 3;
   const progressPercent = Math.round((currentDay / totalDays) * 100);
 
   return (
-    <div className="mx-4 h-[100px] rounded-card bg-card-bg shadow-base flex items-center px-4 gap-4 relative overflow-hidden">
+    <div className={`mx-4 h-[100px] rounded-card bg-card-bg shadow-base flex items-center px-4 gap-4 relative overflow-hidden transition-shadow duration-500 ${newArrived ? 'shadow-[0_0_24px_rgba(196,145,92,0.32)]' : ''}`}>
       {/* Dual avatars */}
       <div className="flex-shrink-0 relative w-[72px] h-[56px]">
         <div
@@ -338,7 +340,10 @@ export default function DiaryListPage() {
   const [updates, setUpdates] = useState<StatusUpdate[]>([]);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
+  const [pulseNew, setPulseNew] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+  const prevUpdateCount = useRef(0);
+  const pulseTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const showToast = useCallback((msg: string) => {
     setToastMsg(msg);
@@ -357,7 +362,25 @@ export default function DiaryListPage() {
     if (foundPet) setPet(foundPet);
     const storedUpdates = getUpdates(tagId);
     setUpdates(storedUpdates);
+    prevUpdateCount.current = storedUpdates.length;
   }, [tagId]);
+
+  useEffect(() => {
+    if (!tagId) return;
+    const interval = setInterval(() => {
+      const latest = getUpdates(tagId);
+      if (latest.length > prevUpdateCount.current) {
+        const newCount = latest.length - prevUpdateCount.current;
+        prevUpdateCount.current = latest.length;
+        setUpdates(latest);
+        setPulseNew(true);
+        if (pulseTimer.current) clearTimeout(pulseTimer.current);
+        pulseTimer.current = setTimeout(() => setPulseNew(false), 1800);
+        showToast(`有福刚更新了 ${newCount} 篇日记`);
+      }
+    }, POLL_INTERVAL);
+    return () => clearInterval(interval);
+  }, [tagId, showToast]);
 
   const entries = useMemo(() => {
     const mockEntries = mockDiaryEntries();
@@ -428,7 +451,7 @@ export default function DiaryListPage() {
       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
         {/* Summary card */}
         <div className="mt-4">
-          <DiarySummaryCard petName={petName} />
+          <DiarySummaryCard petName={petName} newArrived={pulseNew} />
         </div>
 
         {/* Diary list */}
@@ -449,9 +472,12 @@ export default function DiaryListPage() {
           className="absolute left-0 right-0 -top-6 h-6 pointer-events-none"
           style={{ background: 'linear-gradient(180deg, rgba(245,241,234,0) 0%, var(--color-primary-bg) 100%)' }}
         />
-        <FloatingEnvelope />
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-primary opacity-60" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-primary" />
+        </span>
         <span className="font-[family-name:var(--font-sans)] text-[13px] text-text-secondary tracking-[0.02em]">
-          下一篇日记预计3小时后送达
+          实时等待有福更新中
         </span>
       </div>
     </div>
