@@ -248,7 +248,7 @@
   position: relative;
 }
 .intro-page .solution-card.featured::before {
-  content: '★ 屏南手作';
+  content: '★ 自研硬件';
   position: absolute;
   top: -12px;
   left: 50%;
@@ -307,6 +307,171 @@
 }
 @media (max-width: 768px) {
   .intro-page .solution-grid { grid-template-columns: 1fr; }
+}
+
+/* === 硬件设计区 === */
+.intro-page .hardware-section { background: linear-gradient(180deg, #FAF7F2 0%, #F5F1EA 100%); }
+
+.intro-page .hw-wrap {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px;
+  align-items: start; margin-top: 50px;
+}
+.intro-page .hw-schematic {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid rgba(216, 210, 197, 0.5);
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(62, 58, 54, 0.06);
+}
+.intro-page .hw-schematic img {
+  width: 100%; height: auto; display: block;
+  background: #fff;
+}
+.intro-page .hw-schematic-caption {
+  padding: 14px 20px;
+  font-size: 13px;
+  color: #6B6560;
+  border-top: 1px solid rgba(216, 210, 197, 0.5);
+  background: #FAF7F2;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.intro-page .hw-schematic-caption strong {
+  font-family: 'Noto Serif SC', serif;
+  color: #3E3A36;
+  font-weight: 500;
+}
+.intro-page .hw-schematic-caption .badge {
+  display: inline-block;
+  background: rgba(107, 142, 127, 0.15);
+  color: #6B8E7F;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.intro-page .hw-feature-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.intro-page .hw-feature {
+  background: white;
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(216, 210, 197, 0.45);
+  transition: all 0.25s;
+}
+.intro-page .hw-feature:hover {
+  border-color: #6B8E7F;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(62, 58, 54, 0.06);
+}
+.intro-page .hw-feature .hw-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+  display: block;
+}
+.intro-page .hw-feature h4 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 16px;
+  color: #3E3A36;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.intro-page .hw-feature .module {
+  font-family: 'Inter', 'Noto Sans SC', monospace;
+  font-size: 12px;
+  color: #8B6F47;
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+.intro-page .hw-feature p {
+  font-size: 13px;
+  color: #6B6560;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.intro-page .hw-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-top: 40px;
+}
+.intro-page .hw-stat {
+  background: white;
+  border-radius: 14px;
+  padding: 22px 16px;
+  text-align: center;
+  border: 1px solid rgba(216, 210, 197, 0.45);
+}
+.intro-page .hw-stat .num {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #6B8E7F;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.intro-page .hw-stat .label {
+  font-size: 12px;
+  color: #6B6560;
+  line-height: 1.4;
+}
+
+.intro-page .hw-pcb-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  margin-top: 40px;
+}
+.intro-page .hw-pcb {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgba(216, 210, 197, 0.5);
+  padding: 16px;
+  transition: transform 0.3s;
+}
+.intro-page .hw-pcb:hover { transform: translateY(-3px); }
+.intro-page .hw-pcb img {
+  width: 100%; height: auto; display: block;
+  border-radius: 8px;
+  background: #1a1a1a;
+}
+.intro-page .hw-pcb-label {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #6B6560;
+}
+.intro-page .hw-pcb-label strong {
+  font-family: 'Noto Serif SC', serif;
+  color: #3E3A36;
+  font-weight: 500;
+}
+
+.intro-page .hw-slogan {
+  margin-top: 50px;
+  padding: 28px 32px;
+  border-left: 4px solid #8B6F47;
+  background: rgba(139, 111, 71, 0.06);
+  border-radius: 12px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 20px;
+  color: #8B6F47;
+  font-style: italic;
+  line-height: 1.7;
+}
+.intro-page .hw-slogan .small {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #6B6560;
+  font-style: normal;
+}
+
+@media (max-width: 968px) {
+  .intro-page .hw-wrap { grid-template-columns: 1fr; gap: 32px; }
+  .intro-page .hw-stats { grid-template-columns: repeat(2, 1fr); }
+  .intro-page .hw-pcb-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .intro-page .hw-feature-grid { grid-template-columns: 1fr; }
 }
 
 /* === Demo 嵌入区 === */

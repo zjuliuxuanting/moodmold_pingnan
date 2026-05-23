@@ -45,6 +45,7 @@ export default function IntroPage() {
           <div className="logo">Moodmold</div>
           <div className="nav-links">
             <a href="#solution">解决方案</a>
+            <a href="#hardware">硬件设计</a>
             <a href="#demo">体验产品</a>
             <a href="#evidence">在地证据</a>
             <a href="#business">商业模型</a>
@@ -86,10 +87,10 @@ export default function IntroPage() {
               </div>
             </div>
             <div className="floating-card bottom">
-              <span style={{ fontSize: 20 }}>🪵</span>
+              <span style={{ fontSize: 20 }}>📡</span>
               <div>
-                <div style={{ color: '#3E3A36', fontWeight: 500 }}>手作木刻通行证</div>
-                <div style={{ color: '#8B847C', fontSize: 11 }}>屏南非遗工艺</div>
+                <div style={{ color: '#3E3A36', fontWeight: 500 }}>3D 打印智能项圈</div>
+                <div style={{ color: '#8B847C', fontSize: 11 }}>GPS · 健康监测</div>
               </div>
             </div>
           </div>
@@ -156,20 +157,109 @@ export default function IntroPage() {
               </ul>
             </div>
             <div className="solution-card featured reveal">
-              <div className="solution-icon c3">🪵</div>
-              <h3>手作木刻通行证</h3>
+              <div className="solution-icon c3">📡</div>
+              <h3>3D 打印智能项圈</h3>
               <ul>
-                <li>屏南本地激光切割工艺</li>
-                <li>V1.0 无电子模块, 扫码激活</li>
-                <li>承载宠物的物理数字身份</li>
+                <li>STM32 + GPS / 北斗双模定位</li>
+                <li>体温 + 活动量 + 佩戴感知</li>
+                <li>IP67 防水 · ≤60g 食品级硅胶</li>
               </ul>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="solution-note reveal">
-            "我们故意没做芯片。<br />
-            乡村寄养的核心不是 GPS 追踪，是情感连接。<br />
-            把硬件成本省下来，all-in 在 AI 内容生成 + 在地民宿合作。"
+      {/* === ③.5 硬件设计 === */}
+      <section id="hardware" className="hardware-section">
+        <div className="container">
+          <div className="reveal">
+            <div className="section-label">硬件设计 / Hardware Design</div>
+            <h2 className="section-title">基于 STM32 的<br />自研智能项圈</h2>
+            <p className="section-subtitle">6 大功能模块 · 7-14 天续航 · IP67 全密封灌胶</p>
+          </div>
+
+          <div className="hw-wrap">
+            <div className="hw-schematic reveal">
+              <img src="/assets/hardware/schematic-wearable.png" alt="项圈主板原理图" />
+              <div className="hw-schematic-caption">
+                <strong>项圈主板原理图</strong>
+                <span className="badge">STM32F103C8T6 · v1.0</span>
+              </div>
+            </div>
+
+            <div className="hw-feature-grid reveal">
+              <div className="hw-feature">
+                <span className="hw-icon">📍</span>
+                <h4>实时定位</h4>
+                <div className="module">ATGM336H · GPS + 北斗</div>
+                <p>3-5 米精度，宠主端实时查看，可配合电子围栏告警</p>
+              </div>
+              <div className="hw-feature">
+                <span className="hw-icon">🌡️</span>
+                <h4>体温监测</h4>
+                <div className="module">MLX90614 · 非接触红外</div>
+                <p>±0.1°C 精度，发热/低体温自动推送告警</p>
+              </div>
+              <div className="hw-feature">
+                <span className="hw-icon">💪</span>
+                <h4>活动量追踪</h4>
+                <div className="module">MPU6050 · 六轴</div>
+                <p>计步 / 久坐 / 跌倒识别，日报展示活跃时段</p>
+              </div>
+              <div className="hw-feature">
+                <span className="hw-icon">🌞</span>
+                <h4>环境感知</h4>
+                <div className="module">光照传感器</div>
+                <p>室内 / 室外自动切换，夜间低功耗休眠</p>
+              </div>
+              <div className="hw-feature">
+                <span className="hw-icon">🎯</span>
+                <h4>佩戴状态</h4>
+                <div className="module">双路压力传感器</div>
+                <p>差分判断松紧 / 移位，自动调位 + 安全急停</p>
+              </div>
+              <div className="hw-feature">
+                <span className="hw-icon">💡</span>
+                <h4>本地交互</h4>
+                <div className="module">OLED + LED + 蜂鸣器</div>
+                <p>0.96″ 状态屏，多色指示灯，寻宠响铃</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="hw-stats reveal">
+            <div className="hw-stat">
+              <div className="num">≤60g</div>
+              <div className="label">整机重量<br />猫 / 小型犬无负担</div>
+            </div>
+            <div className="hw-stat">
+              <div className="num">IP67</div>
+              <div className="label">全密封灌胶<br />雨天 / 水域可用</div>
+            </div>
+            <div className="hw-stat">
+              <div className="num">7-14 天</div>
+              <div className="label">400mAh 续航<br />磁吸充电</div>
+            </div>
+            <div className="hw-stat">
+              <div className="num">BLE + WiFi</div>
+              <div className="label">BLE 配对 + ESP32 上传<br />无网离线缓存</div>
+            </div>
+          </div>
+
+          <div className="hw-pcb-grid reveal">
+            <div className="hw-pcb">
+              <img src="/assets/hardware/pcb-wearable.png" alt="项圈本体 PCB Layout" />
+              <div className="hw-pcb-label"><strong>项圈本体 PCB</strong> · 含天线 / 气压传感器 / 电池座 / Type-C 充电</div>
+            </div>
+            <div className="hw-pcb">
+              <img src="/assets/hardware/pcb-dock.png" alt="充电底座 PCB Layout" />
+              <div className="hw-pcb-label"><strong>充电底座 PCB</strong> · 磁吸对位 / 协议握手 / 状态同步</div>
+            </div>
+          </div>
+
+          <div className="hw-slogan reveal">
+            "挂牌确认身份，项圈感知生命。"
+            <span className="small">挂牌让宠主知道宠物寄养在哪，项圈让宠主看见宠物的每一刻 — 是否健康、是否开心。</span>
           </div>
         </div>
       </section>
