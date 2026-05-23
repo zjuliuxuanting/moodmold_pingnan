@@ -53,17 +53,11 @@ function DiarySummaryCard({ petName, newArrived }: { petName: string; newArrived
     <div className={`mx-4 h-[100px] rounded-card bg-card-bg shadow-base flex items-center px-4 gap-4 relative overflow-hidden transition-shadow duration-500 ${newArrived ? 'shadow-[0_0_24px_rgba(196,145,92,0.32)]' : ''}`}>
       {/* Dual avatars */}
       <div className="flex-shrink-0 relative w-[72px] h-[56px]">
-        <div
-          className="absolute top-0 left-0 w-12 h-12 rounded-full flex items-center justify-center font-[family-name:var(--font-serif)] text-lg font-bold text-white shadow-[0_2px_8px_rgba(139,111,71,0.25)]"
-          style={{ background: 'radial-gradient(circle at 35% 30%, #F5E6D0 0%, #D4A96A 50%, #B87B3C 100%)' }}
-        >
-          福
+        <div className="absolute top-0 left-0 w-12 h-12 rounded-full overflow-hidden shadow-[0_2px_8px_rgba(139,111,71,0.25)] bg-accent-cream">
+          <img src="/assets/youfu/avatar-youfu.png" alt="有福" className="w-full h-full object-cover" />
         </div>
-        <div
-          className="absolute top-2 left-6 w-12 h-12 rounded-full flex items-center justify-center font-[family-name:var(--font-serif)] text-lg font-bold text-white shadow-[0_2px_8px_rgba(196,145,92,0.28)] border-[2.5px] border-card-bg"
-          style={{ background: 'radial-gradient(circle at 35% 30%, #FDE2B5 0%, #E8A64B 50%, #C27A2A 100%)' }}
-        >
-          豆
+        <div className="absolute top-2 left-6 w-12 h-12 rounded-full overflow-hidden shadow-[0_2px_8px_rgba(196,145,92,0.28)] border-[2.5px] border-card-bg bg-accent-cream">
+          <img src="/assets/doudou/doudou.png" alt={petName} className="w-full h-full object-cover" />
         </div>
       </div>
 
@@ -302,9 +296,11 @@ function DiaryCard({
 
       {/* Illustration */}
       <div className="px-4 mt-3">
-        {day === 1 && <Day1Illustration />}
-        {day === 2 && <Day2Illustration />}
-        {day === 3 && <Day3Illustration />}
+        <img
+          src={`/assets/diary/diary-day${day}-${day === 1 ? 'arrival' : day === 2 ? 'explore' : 'shimmer'}.png`}
+          alt={`Day ${day}`}
+          className="w-full h-auto rounded-[12px] object-cover"
+        />
       </div>
 
       {/* Title */}

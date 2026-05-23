@@ -1,5 +1,6 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Outlet } from 'react-router-dom'
 import PhoneFrame from './components/PhoneFrame'
+import IntroPage from './pages/IntroPage'
 import HomePage from './pages/HomePage'
 import StayPage from './pages/StayPage'
 import BookPage from './pages/BookPage'
@@ -20,11 +21,23 @@ import HostRegisterPage from './pages/HostRegisterPage'
 import CheckinPage from './pages/CheckinPage'
 import QrPage from './pages/QrPage'
 
-function App() {
+function PhoneLayout() {
   return (
     <PhoneFrame>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+      <Outlet />
+    </PhoneFrame>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      {/* 产品介绍页 — 不套手机壳 */}
+      <Route path="/" element={<IntroPage />} />
+
+      {/* 所有 H5 页面都套 PhoneFrame */}
+      <Route element={<PhoneLayout />}>
+        <Route path="/booking" element={<HomePage />} />
         <Route path="/stay" element={<StayPage />} />
         <Route path="/book/:innId" element={<BookPage />} />
         <Route path="/pass/:tagId" element={<PassPage />} />
@@ -44,8 +57,8 @@ function App() {
         <Route path="/checkin/:tagId" element={<CheckinPage />} />
         <Route path="/qr" element={<QrPage />} />
         <Route path="*" element={<HomePage />} />
-      </Routes>
-    </PhoneFrame>
+      </Route>
+    </Routes>
   )
 }
 

@@ -81,21 +81,15 @@ export default function HostMonthPage() {
           {/* Meta */}
           <div className="relative z-[1] flex-1 min-w-0">
             <div className="text-2xl font-semibold text-text-primary leading-tight tracking-wider">
-              王建国
+              王青
             </div>
             <div className="mt-1.5 text-base text-[#6B6560] leading-snug break-words">
-              山居民宿<span className="mx-1.5 text-accent-wood opacity-60">·</span>屏南龙潭村
+              其祥居<span className="mx-1.5 text-accent-wood opacity-60">·</span>屏南龙潭村
             </div>
             <span
-              className="inline-flex items-center gap-1 mt-3 h-7 px-3 rounded-pill text-white text-sm font-medium tracking-wider"
-              style={{
-                background: 'var(--color-accent-wood)',
-                boxShadow: '0 2px 6px rgba(139,111,71,0.18)',
-              }}
+              className="inline-flex items-center gap-1.5 mt-3 h-7 pl-1 pr-3 rounded-pill bg-white text-accent-wood text-sm font-medium tracking-wider shadow-[0_2px_8px_rgba(62,58,54,0.12)]"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12.5l4.5 4.5L19 7.5" />
-              </svg>
+              <img src="/assets/badges/badge-first-certified.png" alt="" className="w-5 h-5 object-contain" />
               首批认证
             </span>
           </div>

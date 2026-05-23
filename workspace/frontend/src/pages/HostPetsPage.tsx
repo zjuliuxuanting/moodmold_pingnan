@@ -17,6 +17,11 @@ interface PetCardData {
   tasks: PetTask[]
 }
 
+const PET_AVATARS: Record<string, string> = {
+  doudou: '/assets/doudou/doudou.png',
+  xiaohua: '/assets/xiaohua/xiaohua.png',
+}
+
 const mockPets: PetCardData[] = [
   {
     tagId: 'doudou',
@@ -98,32 +103,20 @@ function CollarBindModal({
             <p className="font-[family-name:var(--font-sans)] text-sm text-text-secondary text-center leading-relaxed">
               请用手机扫描项圈上的二维码<br />完成智能项圈与宠物档案的配对
             </p>
-
             <div className="bg-white rounded-card p-4 shadow-base border border-border-light">
               {qrDataUrl ? (
                 <img src={qrDataUrl} alt="项圈绑定码" className="w-[220px] h-[220px]" />
               ) : (
                 <div className="w-[220px] h-[220px] flex items-center justify-center">
-                  <span className="font-[family-name:var(--font-sans)] text-sm text-text-tertiary">
-                    生成中...
-                  </span>
+                  <span className="font-[family-name:var(--font-sans)] text-sm text-text-tertiary">生成中...</span>
                 </div>
               )}
             </div>
-
             <div className="flex gap-3 w-full">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 h-12 rounded-pill border border-border-light text-text-secondary font-[family-name:var(--font-sans)] text-sm font-medium active:scale-[0.98] transition-transform"
-              >
+              <button type="button" onClick={onClose} className="flex-1 h-12 rounded-pill border border-border-light text-text-secondary font-[family-name:var(--font-sans)] text-sm font-medium active:scale-[0.98] transition-transform">
                 取消
               </button>
-              <button
-                type="button"
-                onClick={handleSimulateScan}
-                className="flex-1 h-12 rounded-pill bg-accent-primary text-white font-[family-name:var(--font-sans)] text-sm font-medium shadow-[0_4px_14px_rgba(107,142,127,0.28)] active:scale-[0.98] transition-transform"
-              >
+              <button type="button" onClick={handleSimulateScan} className="flex-1 h-12 rounded-pill bg-accent-primary text-white font-[family-name:var(--font-sans)] text-sm font-medium shadow-[0_4px_14px_rgba(107,142,127,0.28)] active:scale-[0.98] transition-transform">
                 模拟扫描成功
               </button>
             </div>
@@ -134,14 +127,8 @@ function CollarBindModal({
           <div className="flex flex-col items-center gap-5 py-8">
             <div className="relative w-[100px] h-[100px] flex items-center justify-center">
               {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="absolute w-[100px] h-[100px] rounded-full border-[2px] border-accent-primary opacity-0"
-                  style={{
-                    animation: `ring-pulse 1.6s ease-out infinite`,
-                    animationDelay: `${i * 0.4}s`,
-                  }}
-                />
+                <div key={i} className="absolute w-[100px] h-[100px] rounded-full border-[2px] border-accent-primary opacity-0"
+                  style={{ animation: `ring-pulse 1.6s ease-out infinite`, animationDelay: `${i * 0.4}s` }} />
               ))}
               <div className="w-16 h-16 rounded-full bg-accent-primary flex items-center justify-center text-white z-[2]">
                 <svg className="animate-spin" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -149,12 +136,8 @@ function CollarBindModal({
                 </svg>
               </div>
             </div>
-            <p className="font-[family-name:var(--font-sans)] text-base text-text-primary font-medium">
-              正在同步项圈数据...
-            </p>
-            <p className="font-[family-name:var(--font-sans)] text-sm text-text-secondary">
-              GPS · 体温 · 活动量
-            </p>
+            <p className="font-[family-name:var(--font-sans)] text-base text-text-primary font-medium">正在同步项圈数据...</p>
+            <p className="font-[family-name:var(--font-sans)] text-sm text-text-secondary">GPS · 体温 · 活动量</p>
           </div>
         )}
 
@@ -165,42 +148,24 @@ function CollarBindModal({
                 <path d="M5 12.5l4.5 4.5L19 7.5" />
               </svg>
             </div>
-            <h3 className="font-[family-name:var(--font-serif)] text-lg font-medium text-text-primary">
-              项圈绑定成功
-            </h3>
+            <h3 className="font-[family-name:var(--font-serif)] text-lg font-medium text-text-primary">项圈绑定成功</h3>
             <p className="font-[family-name:var(--font-sans)] text-sm text-text-secondary text-center leading-relaxed">
-              {pet.name}的智能项圈已激活<br />
-              现在可以实时查看定位、体温和活动量
+              {pet.name}的智能项圈已激活<br />现在可以实时查看定位、体温和活动量
             </p>
             <div className="flex gap-3 w-full mt-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 h-12 rounded-pill border border-border-light text-text-secondary font-[family-name:var(--font-sans)] text-sm font-medium active:scale-[0.98] transition-transform"
-              >
+              <button type="button" onClick={onClose} className="flex-1 h-12 rounded-pill border border-border-light text-text-secondary font-[family-name:var(--font-sans)] text-sm font-medium active:scale-[0.98] transition-transform">
                 返回列表
               </button>
-              <button
-                type="button"
-                onClick={handleGoToPet}
-                className="flex-1 h-12 rounded-pill bg-accent-primary text-white font-[family-name:var(--font-sans)] text-sm font-medium shadow-[0_4px_14px_rgba(107,142,127,0.28)] active:scale-[0.98] transition-transform"
-              >
+              <button type="button" onClick={handleGoToPet} className="flex-1 h-12 rounded-pill bg-accent-primary text-white font-[family-name:var(--font-sans)] text-sm font-medium shadow-[0_4px_14px_rgba(107,142,127,0.28)] active:scale-[0.98] transition-transform">
                 查看{pet.name}主页
               </button>
             </div>
           </div>
         )}
       </div>
-
       <style>{`
-        @keyframes sheetUp {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
-        @keyframes ring-pulse {
-          0% { transform: scale(0.6); opacity: 0.6; }
-          100% { transform: scale(1.4); opacity: 0; }
-        }
+        @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes ring-pulse { 0% { transform: scale(0.6); opacity: 0.6; } 100% { transform: scale(1.4); opacity: 0; } }
       `}</style>
     </div>
   )
@@ -259,7 +224,7 @@ export default function HostPetsPage() {
         className="h-full overflow-y-auto pt-[54px] pb-8 bg-primary-bg
         [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        {/* Top nav */}
+        {/* Top nav · 64px */}
         <nav
           className="h-16 px-4 grid items-center gap-2"
           style={{ gridTemplateColumns: '48px 1fr 60px' }}
@@ -302,8 +267,8 @@ export default function HostPetsPage() {
           {mockPets.map((pet, idx) => (
             <article
               key={pet.tagId}
-              className="min-h-[240px] bg-card-bg rounded-card shadow-base overflow-hidden flex flex-col"
-              style={{ animation: `cell-enter 350ms cubic-bezier(.4,0,.2,1) both ${idx * 100}ms` }}
+              className={`min-h-[240px] bg-card-bg rounded-card shadow-base overflow-hidden flex flex-col animate-cell-enter`}
+              style={{ animationDelay: `${idx * 100}ms` }}
             >
               {/* Top portrait band */}
               <div
@@ -317,43 +282,34 @@ export default function HostPetsPage() {
                 {/* Avatar — click opens collar bind modal */}
                 <button
                   type="button"
-                  className="w-20 h-20 rounded-full border-2 border-accent-wood shrink-0 overflow-hidden flex items-center justify-center relative cursor-pointer active:scale-[0.96] transition-transform"
+                  className="w-20 h-20 rounded-full border-2 border-accent-wood shrink-0 overflow-hidden flex items-center justify-center relative cursor-pointer active:scale-[0.96] transition-transform bg-accent-cream"
                   style={{
                     boxShadow: '0 3px 12px rgba(139,111,71,0.18)',
-                    background: pet.isNew
-                      ? 'radial-gradient(circle at 36% 30%, #efe7dc 0%, #c2b4a4 50%, #7e7466 100%)'
-                      : 'radial-gradient(circle at 36% 30%, #ffd9a8 0%, #f0b97a 45%, #c9885a 100%)',
                   }}
                   onClick={() => setBindModalPet(pet)}
                   aria-label={`绑定${pet.name}的项圈`}
                 >
-                  {/* Cat face for doudou, dog face for xiaohua */}
-                  {pet.tagId === 'doudou' ? (
-                    <span className="block w-full h-full relative">
-                      <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] left-[32%]" />
-                      <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] right-[32%]" />
-                      <span
-                        className="absolute left-1/2 top-[54%] -translate-x-1/2"
-                        style={{
-                          width: 0, height: 0,
-                          borderLeft: '4px solid transparent',
-                          borderRight: '4px solid transparent',
-                          borderTop: '5px solid rgba(139,90,60,0.85)',
-                        }}
-                      />
-                    </span>
-                  ) : (
+                  {PET_AVATARS[pet.tagId] ? (
+                    <img
+                      src={PET_AVATARS[pet.tagId]}
+                      alt={pet.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : pet.tagId === 'xiaohua' ? (
                     <span className="block w-full h-full relative">
                       <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[36%] left-[30%]" />
                       <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[36%] right-[30%]" />
-                      <span
-                        className="absolute left-1/2 top-[48%] -translate-x-1/2 w-3 h-2 rounded-full"
-                        style={{ background: 'rgba(62,58,54,0.8)' }}
-                      />
-                      <span
-                        className="absolute left-[44%] top-[57%] w-4 h-3 rounded-b-full"
-                        style={{ background: 'rgba(62,58,54,0.55)' }}
-                      />
+                      <span className="absolute left-1/2 top-[48%] -translate-x-1/2 w-3 h-2 rounded-full"
+                        style={{ background: 'rgba(62,58,54,0.8)' }} />
+                      <span className="absolute left-[44%] top-[57%] w-4 h-3 rounded-b-full"
+                        style={{ background: 'rgba(62,58,54,0.55)' }} />
+                    </span>
+                  ) : (
+                    <span className="block w-full h-full relative">
+                      <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] left-[32%]" />
+                      <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] right-[32%]" />
+                      <span className="absolute left-1/2 top-[54%] -translate-x-1/2"
+                        style={{ width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '5px solid rgba(139,90,60,0.85)' }} />
                     </span>
                   )}
                 </button>
@@ -389,7 +345,7 @@ export default function HostPetsPage() {
                   </div>
                 </div>
 
-                {/* Bind collar button — prominent call to action */}
+                {/* Bind collar button */}
                 <button
                   type="button"
                   onClick={(e) => {
@@ -430,6 +386,7 @@ export default function HostPetsPage() {
                           : 'text-text-primary font-normal'
                       }`}
                     >
+                      {/* Checkbox */}
                       <span
                         className={`w-5 h-5 rounded-[5px] border-[1.5px] shrink-0 flex items-center justify-center ${
                           task.status === 'done'

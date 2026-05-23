@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "复制为 settings.local.json，用于个人覆盖（已在 .gitignore 中忽略）",
+  "permissions": {
+    "allow": [
+      "Bash(docker *)"
+    ]
+  }
+}

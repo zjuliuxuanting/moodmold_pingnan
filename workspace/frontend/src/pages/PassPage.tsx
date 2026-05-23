@@ -224,10 +224,10 @@ export default function PassPage() {
 
             {/* Stamp seal */}
             <div
-              className="absolute top-[240px] right-[22px] w-11 h-11 border-[1.5px] border-[#B8542F] rounded-[6px] flex items-center justify-center opacity-70 bg-white/20"
+              className="absolute top-[230px] right-[14px] w-16 h-16 flex items-center justify-center opacity-90"
               style={{ transform: 'rotate(-6deg)' }}
             >
-              <span className="font-[family-name:var(--font-serif)] font-bold text-[22px] text-[#B8542F] leading-none">印</span>
+              <img src="/assets/decorations/stamp-pingnan-pass.png" alt="屏南通行" className="w-full h-full object-contain" />
             </div>
 
             {/* Personality dual-column */}
@@ -250,20 +250,7 @@ export default function PassPage() {
 
             {/* Footer bridge */}
             <div className="mt-auto mb-4 flex flex-col items-center gap-1 relative z-[2]">
-              <svg className="h-8 text-accent-wood opacity-40" viewBox="0 0 160 32" fill="currentColor" aria-hidden="true">
-                <path d="M0 28 Q40 30 80 28 T160 28 V32 H0 Z" opacity="0.35"/>
-                <path d="M16 24 Q30 12 44 24" fill="none" stroke="currentColor" strokeWidth="1"/>
-                <path d="M72 24 Q80 14 88 24" fill="none" stroke="currentColor" strokeWidth="1"/>
-                <path d="M116 24 Q130 12 144 24" fill="none" stroke="currentColor" strokeWidth="1"/>
-                <rect x="2" y="22" width="156" height="2.5"/>
-                <path d="M-2 14 Q4 12 8 12 L152 12 Q156 12 162 14 L160 16 L154 16 L154 14 L6 14 L6 16 L0 16 Z"/>
-                <path d="M40 8 Q80 4 120 8 L116 12 L44 12 Z" opacity="0.75"/>
-                <rect x="78" y="3" width="4" height="5" rx="1"/>
-                <circle cx="80" cy="2.5" r="1.2"/>
-                <rect x="29" y="16" width="1.5" height="8"/>
-                <rect x="79" y="16" width="1.5" height="8"/>
-                <rect x="129" y="16" width="1.5" height="8"/>
-              </svg>
+              <img src="/assets/decorations/decoration-lanqiao.png" alt="廊桥" className="h-10 object-contain opacity-80" />
               <span className="font-[family-name:var(--font-en-serif)] italic text-sm text-accent-wood tracking-[0.06em]">
                 in 屏南 · 龙潭
               </span>
@@ -278,7 +265,7 @@ export default function PassPage() {
 
         {/* Description */}
         <p className="mx-6 mt-6 text-center font-[family-name:var(--font-sans)] text-sm leading-[1.7] text-text-secondary">
-          <span className="text-accent-wood font-medium">{petName}</span>已抵达山居民宿,<br/>
+          <span className="text-accent-wood font-medium">{petName}</span>已抵达其祥居,<br/>
           <span className="text-accent-wood font-medium">有福</span>正在带她熟悉村子。
         </p>
 

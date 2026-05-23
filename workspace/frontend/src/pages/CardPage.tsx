@@ -91,7 +91,14 @@ export default function CardPage() {
 
   const petName = pet?.name || '豆豆';
   const petPhoto = pet?.photo || '';
-  const checkinDate = pet?.checkinDate || '2026.05.25';
+  const formatDate = (iso: string): string => {
+    if (/^\d{4}\.\d{2}\.\d{2}/.test(iso)) return iso;
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
+  };
+  const checkinDate = formatDate(pet?.checkinDate || '2026.05.25');
   const updates = tagId ? getUpdates(tagId) : [];
   const diaryCount = updates.length;
 
@@ -99,7 +106,14 @@ export default function CardPage() {
   const handleDownload = () => showToast('纪念卡下载中，请稍候');
 
   return (
-    <div className="w-full h-full flex flex-col relative bg-primary-bg overflow-hidden">
+    <div
+      className="w-full h-full flex flex-col relative bg-primary-bg overflow-hidden"
+      style={{
+        backgroundImage: 'linear-gradient(180deg, rgba(245,241,234,0.86) 0%, rgba(245,241,234,0.92) 100%), url(/assets/backgrounds/bg-p5-summary.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       {/* Toast */}
       <div
         className={`absolute left-1/2 top-[50px] -translate-x-1/2 z-[70] bg-[rgba(62,58,54,0.92)] text-white px-5 py-3 rounded-pill font-[family-name:var(--font-sans)] text-[13px] tracking-[0.02em] shadow-lift transition-all duration-[220ms] pointer-events-none ${
@@ -194,7 +208,7 @@ export default function CardPage() {
             <div className="px-[22px] py-5 flex flex-col items-center relative z-[2]">
               {/* Bridge */}
               <div className="w-full flex justify-center">
-                <BridgeSVG />
+                <img src="/assets/decorations/decoration-lanqiao.png" alt="廊桥" className="h-14 object-contain" />
               </div>
 
               {/* Title */}
@@ -229,18 +243,8 @@ export default function CardPage() {
                 </div>
 
                 {/* 有福 */}
-                <div
-                  className="w-[80px] h-[80px] rounded-full border-[2.5px] border-white shadow-base flex items-center justify-center overflow-hidden"
-                  style={{
-                    background: 'radial-gradient(circle at 35% 30%, #C9A87C 0%, #A07850 55%, #8B6F47 100%)',
-                  }}
-                >
-                  <span
-                    className="font-[family-name:var(--font-serif)] font-semibold text-[28px] text-white tracking-[0.08em]"
-                    style={{ textShadow: '0 1px 2px rgba(0,0,0,0.15)' }}
-                  >
-                    福
-                  </span>
+                <div className="w-[80px] h-[80px] rounded-full border-[2.5px] border-white shadow-base overflow-hidden bg-accent-cream">
+                  <img src="/assets/youfu/avatar-youfu.png" alt="有福" className="w-full h-full object-cover" />
                 </div>
               </div>
 

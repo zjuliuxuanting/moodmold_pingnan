@@ -40,3 +40,9 @@ build/
 
 # Logs
 *.log
+
+# Claude Code 本地覆盖
+.claude/settings.local.json
+
+# 本地下载的工具（可选）
+.tools/

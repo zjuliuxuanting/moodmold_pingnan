@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moodmold · 豆豆的屏南日记</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../tokens.css" />
+
+  <style>
+    /* ============================================================
+       Desk + iPhone (shared chrome)
+       ============================================================ */
+    body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(232,239,235,0.45) 0%, transparent 55%),
+        var(--color-primary-bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+    .desk {
+      display: flex; gap: 64px;
+      align-items: center; flex-wrap: wrap; justify-content: center;
+    }
+    .desk-meta { max-width: 280px; font-family: var(--font-sans); }
+    .desk-meta .edition {
+      font-family: var(--font-en-serif); font-style: italic; font-size: 15px;
+      color: var(--color-accent-wood); letter-spacing: 0.02em; margin-bottom: 8px;
+    }
+    .desk-meta h1 {
+      font-family: var(--font-serif); font-size: 32px; font-weight: 600;
+      line-height: 1.3; margin: 0 0 16px;
+    }
+    .desk-meta p {
+      font-size: 14px; color: var(--color-text-secondary);
+      line-height: 1.7; margin: 0 0 12px;
+    }
+    .desk-meta .spec {
+      margin-top: 24px; padding-top: 18px;
+      border-top: 1px solid var(--color-border-light);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px; color: var(--color-text-tertiary);
+      letter-spacing: 0.06em; line-height: 1.8;
+    }
+
+    .iphone {
+      width: 393px; height: 852px;
+      background: #1a1a1a; border-radius: 54px; padding: 11px;
+      box-shadow: var(--shadow-lift), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative; flex-shrink: 0;
+    }
+    .iphone::after {
+      content: ""; position: absolute;
+      left: -2px; top: 180px; width: 3px; height: 60px;
+      background: #2a2a2a; border-radius: 2px;
+    }
+    .iphone .screen {
+      width: 100%; height: 100%;
+      background: var(--color-primary-bg);
+      border-radius: 44px; overflow: hidden; position: relative;
+    }
+    .iphone .notch {
+      position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px; background: #1a1a1a;
+      border-radius: 20px; z-index: 50;
+    }
+    .iphone .statusbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 54px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 28px 0;
+      font-family: var(--font-en-sans); font-size: 15px; font-weight: 600;
+      color: var(--color-text-primary); z-index: 40; pointer-events: none;
+    }
+    .iphone .statusbar .icons { display: inline-flex; gap: 5px; align-items: center; }
+
+    /* ============================================================
+       Page transition
+       ============================================================ */
+    .screen-content {
+      position: absolute; inset: 0;
+      animation: pageEnter 400ms ease-out both;
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateX(8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .screen-content.is-leaving-back {
+      animation: pageLeaveBack 200ms ease-out forwards;
+    }
+    .screen-content.is-leaving-forward {
+      animation: pageLeaveForward 200ms ease-out forwards;
+    }
+    @keyframes pageLeaveForward {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(-8px); }
+    }
+    @keyframes pageLeaveBack {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(8px); }
+    }
+
+    /* ============================================================
+       Scroll surface — bottom hint is fixed so reserve space
+       ============================================================ */
+    .page-scroll {
+      width: 100%; height: 100%;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-top: 54px;
+      padding-bottom: 80px;
+      background: var(--color-primary-bg);
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+
+    /* ============================================================
+       Top nav
+       ============================================================ */
+    .topnav {
+      height: 56px; padding: 0 16px;
+      display: grid; grid-template-columns: 40px 1fr 40px;
+      align-items: center;
+    }
+    .topnav .iconbtn {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--color-text-primary);
+      transition: background-color .15s ease;
+    }
+    .topnav .iconbtn:hover { background: rgba(62,58,54,0.06); }
+    .topnav .title {
+      text-align: center; font-family: var(--font-sans);
+      font-size: 16px; font-weight: 500; color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    /* ============================================================
+       Summary card · 100px · 有福 × 豆豆
+       ============================================================ */
+    .summary {
+      margin: 16px 24px 0;
+      height: 100px;
+      border-radius: var(--r-card);
+      background: linear-gradient(95deg, #F5EFE6 0%, #FBF8F1 60%, #FFFFFF 100%);
+      box-shadow: var(--shadow-base);
+      padding: 0 20px;
+      display: flex; align-items: center; gap: 18px;
+      position: relative;
+      overflow: hidden;
+      border: 0.75px solid rgba(216, 210, 197, 0.6);
+    }
+    /* tiny ornament — faint Caveat letter as decoration */
+    .summary::after {
+      content: "Day 3";
+      position: absolute;
+      right: 18px; bottom: 10px;
+      font-family: "Caveat", cursive;
+      font-size: 28px;
+      color: var(--color-accent-wood);
+      opacity: 0.18;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      transform: rotate(-4deg);
+    }
+    .avatar-pair {
+      display: flex; align-items: center;
+      flex-shrink: 0;
+    }
+    .av {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-family: var(--font-serif);
+      font-weight: 600; font-size: 18px;
+      letter-spacing: 0.04em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+      box-shadow: 0 2px 6px rgba(139,111,71,0.15);
+      position: relative;
+    }
+    .av.yf {
+      background:
+        radial-gradient(circle at 35% 32%, #f0d9b8 0%, #d6a877 50%, #a3784c 100%);
+      z-index: 2;
+    }
+    .av.dd {
+      background:
+        radial-gradient(circle at 36% 30%, #ffd9a8 0%, #f0b97a 45%, #c9885a 100%);
+      margin-left: -12px;
+      z-index: 1;
+    }
+
+    .summary .meta { flex: 1; min-width: 0; line-height: 1.4; }
+    .summary .pair-name {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+    }
+    .summary .pair-name .x {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      color: var(--color-accent-wood);
+      margin: 0 6px;
+      font-size: 18px;
+    }
+    .summary .progress {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-top: 6px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .summary .progress .day {
+      font-family: var(--font-en-sans);
+      font-weight: 600;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.04em;
+    }
+    /* slim progress mini-bar inside summary */
+    .summary .progress .mini-bar {
+      flex: 0 0 auto;
+      width: 64px; height: 3px;
+      background: rgba(139,111,71,0.18);
+      border-radius: 2px;
+      margin-left: 4px;
+      overflow: hidden;
+    }
+    .summary .progress .mini-bar .fill {
+      height: 100%;
+      width: 42.85%; /* 3/7 */
+      background: var(--color-accent-wood);
+      border-radius: 2px;
+    }
+
+    /* ============================================================
+       Diary list
+       ============================================================ */
+    .diary-list {
+      padding: 16px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .diary-card {
+      background: var(--color-card-bg);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-base);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+      overflow: hidden;
+    }
+    .diary-card:active {
+      transform: scale(0.995);
+      box-shadow: var(--shadow-soft);
+    }
+    /* card paper grain — even subtler than the pass */
+    .diary-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.22  0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      opacity: 0.08;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      border-radius: inherit;
+      z-index: 0;
+    }
+    .diary-card > * { position: relative; z-index: 1; }
+
+    /* Top row */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-top .tag .sparkle {
+      width: 11px; height: 11px;
+      margin-right: 4px;
+      display: inline-block;
+      vertical-align: -1px;
+    }
+    .card-top .time {
+      font-family: var(--font-en-sans);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+    .card-top .time .clock {
+      width: 11px; height: 11px;
+      display: inline-block;
+      vertical-align: -1px;
+      margin-right: 4px;
+      color: var(--color-text-tertiary);
+    }
+
+    /* Sketch image area · 120px tall */
+    .sketch-wrap {
+      height: 120px;
+      border-radius: var(--r-input);
+      background: linear-gradient(180deg, #F8F2E6 0%, #F1E8D5 100%);
+      position: relative;
+      overflow: hidden;
+      border: 0.75px solid rgba(216,210,197,0.5);
+    }
+    .sketch-wrap::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.0' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.42  0 0 0 0 0.28  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.10;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+    .sketch-wrap .sketch {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* Card body */
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-body .title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+    }
+    .card-body .excerpt {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-clamp: 2;
+      overflow: hidden;
+    }
+    .card-body .sig {
+      align-self: flex-end;
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--color-accent-wood);
+      letter-spacing: 0.02em;
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       Day 3 · shimmer variant
+       ============================================================ */
+    .diary-card--shimmer {
+      border: 1.5px solid var(--color-accent-shimmer);
+      box-shadow:
+        0 2px 16px rgba(196, 145, 92, 0.18),
+        0 0 0 4px rgba(196, 145, 92, 0.06);
+      background:
+        linear-gradient(180deg, #FFFCF6 0%, #FFF9EE 100%);
+      position: relative;
+    }
+    /* shimmer corner ribbon */
+    .diary-card--shimmer .corner-spark {
+      position: absolute;
+      top: 12px;
+      left: -2px;
+      color: var(--color-accent-shimmer);
+      z-index: 2;
+    }
+    /* When shimmer card has a corner spark, indent the tag a bit */
+    .diary-card--shimmer .card-top .tag--shimmer .sparkle {
+      color: var(--color-accent-shimmer);
+    }
+
+    /* ============================================================
+       Bottom fixed hint · 56px
+       ============================================================ */
+    .bottom-hint {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 56px;
+      background: var(--color-primary-bg);
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.02em;
+      z-index: 30;
+    }
+    .bottom-hint::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: -24px; height: 24px;
+      background: linear-gradient(180deg, rgba(245,241,234,0) 0%, var(--color-primary-bg) 100%);
+      pointer-events: none;
+    }
+    .bottom-hint .env {
+      width: 16px; height: 16px;
+      color: var(--color-accent-wood);
+      display: inline-block;
+      animation: envFloat 3s ease-in-out infinite;
+    }
+    @keyframes envFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-2px); }
+    }
+
+    /* ============================================================
+       Toast
+       ============================================================ */
+    .toast {
+      position: absolute;
+      left: 50%; top: 100px;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(62, 58, 54, 0.92);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 70;
+      box-shadow: var(--shadow-lift);
+    }
+    .toast.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================================
+       Demo mode · hidden trigger + slide-up sheet
+       ============================================================ */
+    .demo-trigger {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(176, 168, 157, 0.45);
+      cursor: pointer;
+      z-index: 35;
+      padding: 0;
+      transition: background-color .2s ease, transform .15s ease;
+    }
+    .demo-trigger:hover {
+      background: rgba(176, 168, 157, 0.85);
+      transform: scale(1.06);
+    }
+    .demo-trigger::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: 50%;
+      background: rgba(62, 58, 54, 0.4);
+    }
+
+    .demo-mask {
+      position: absolute; inset: 0;
+      background: rgba(62, 58, 54, 0);
+      backdrop-filter: blur(0px);
+      pointer-events: none;
+      transition: background-color .3s ease, backdrop-filter .3s ease;
+      z-index: 80;
+    }
+    .demo-mask.is-open {
+      background: rgba(62, 58, 54, 0.42);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      pointer-events: auto;
+    }
+
+    .demo-panel {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: var(--color-card-bg);
+      border-radius: 24px 24px 0 0;
+      padding: 14px 24px 28px;
+      z-index: 81;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 -8px 28px rgba(62,58,54,0.18);
+    }
+    .demo-panel.is-open { transform: translateY(0); }
+    .demo-panel .grabber {
+      width: 36px; height: 4px;
+      background: var(--color-border-light);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+    .demo-panel .demo-title {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .demo-panel .demo-title .sub {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      font-size: 14px;
+      margin-left: 4px;
+    }
+    .demo-panel .demo-hint {
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.02em;
+      margin: 0 0 20px;
+    }
+    .demo-panel .demo-btn {
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border-light);
+      background: #fff;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      transition: border-color .15s ease, background-color .15s ease, transform .12s ease;
+    }
+    .demo-panel .demo-btn:active { transform: scale(0.99); }
+    .demo-panel .demo-btn:hover {
+      border-color: var(--color-accent-primary);
+      background: var(--color-accent-soft);
+    }
+    .demo-panel .demo-btn .label {
+      display: flex; flex-direction: column; align-items: flex-start;
+    }
+    .demo-panel .demo-btn .label .ttl {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .demo-panel .demo-btn .label .sub {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+    .demo-panel .demo-btn .arrow {
+      color: var(--color-text-tertiary);
+    }
+    .demo-panel .demo-btn.ghost {
+      background: transparent;
+      border: 1px dashed var(--color-border-light);
+      color: var(--color-text-secondary);
+    }
+    .demo-panel .demo-btn.ghost .label .ttl {
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
+    .demo-panel .demo-close {
+      width: 100%;
+      height: 44px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: var(--color-text-tertiary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      margin-top: 4px;
+    }
+    .demo-panel .demo-close:hover { color: var(--color-text-primary); }
+
+    /* ============================================================
+       Mobile fallback
+       ============================================================ */
+    @media (max-width: 880px) {
+      body { padding: 0; align-items: stretch; }
+      .desk { gap: 0; }
+      .desk-meta { display: none; }
+      .iphone {
+        width: 100vw; height: 100vh;
+        border-radius: 0; padding: 0; box-shadow: none;
+      }
+      .iphone::after { display: none; }
+      .iphone .screen { border-radius: 0; }
+      .iphone .notch { display: none; }
+      .iphone .statusbar { display: none; }
+      .page-scroll { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="desk">
+
+    <aside class="desk-meta">
+      <div class="edition">Page 05 · Diary</div>
+      <h1>「有福写给<br/>豆豆的家书。」</h1>
+      <p>寄养期间每天傍晚送达的明信片式日记。点击任一卡片进入 Page 6 详情。第 3 天是「闪闪时刻」,视觉上特别强调。</p>
+      <p>下一篇日记 3 小时后送达 · 像每天等一张邮票。</p>
+      <div class="spec">
+        iPhone 15 · 393 × 852<br/>
+        DESIGN TOKENS · v0.1<br/>
+        2026 · 05 · 22
+      </div>
+    </aside>
+
+    <div class="iphone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="icons">
+            <svg width="18" height="11" viewBox="0 0 18 11"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5C5 2.5 2.3 3.7.5 5.5L2 7C3.6 5.4 5.7 4.5 8 4.5s4.4.9 6 2.5l1.5-1.5C13.7 3.7 11 2.5 8 2.5zM8 6.5c-1.4 0-2.7.5-3.7 1.5L8 11l3.7-3c-1-1-2.3-1.5-3.7-1.5z" fill="currentColor"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12">
+              <rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/>
+              <rect x="2" y="2" width="18" height="8" rx="1.5" fill="currentColor"/>
+              <rect x="23" y="4" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="toast" id="toast">Page 6 · 日报详情 即将开放</div>
+
+        <!-- Hidden demo trigger (24px gray dot, bottom-right) -->
+        <button class="demo-trigger" id="demo-trigger" aria-label="演示模式"></button>
+
+        <!-- Demo mode overlay -->
+        <div class="demo-mask" id="demo-mask"></div>
+        <div class="demo-panel" id="demo-panel" role="dialog" aria-label="演示模式">
+          <div class="grabber"></div>
+          <div class="demo-title">演示模式 <span class="sub">/ 仅黑客松</span></div>
+          <p class="demo-hint">扫码失败时,从这里直接跳转</p>
+          <button class="demo-btn" data-go="page6">
+            <span class="label">
+              <span class="ttl">跳到 Page 6</span>
+              <span class="sub">闪闪时刻 · 万安廊桥</span>
+            </span>
+            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+          <button class="demo-btn" data-go="page8">
+            <span class="label">
+              <span class="ttl">跳到 Page 8</span>
+              <span class="sub">屏南旅行纪念卡</span>
+            </span>
+            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+          <button class="demo-btn ghost" data-go="reset">
+            <span class="label">
+              <span class="ttl">重置 demo</span>
+              <span class="sub">回到 Page 1 首页</span>
+            </span>
+            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+          </button>
+          <button class="demo-close" id="demo-close">取消</button>
+        </div>
+
+        <div class="screen-content" id="screen-content" data-screen-label="05 Diary">
+          <div class="page-scroll">
+
+            <!-- Top nav -->
+            <nav class="topnav">
+              <div class="iconbtn" id="back-btn" title="返回">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </div>
+              <div class="title">豆豆的屏南日记</div>
+              <div class="iconbtn" id="share-btn" title="分享">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+                  <path d="M16 6l-4-4-4 4"/>
+                  <path d="M12 2v14"/>
+                </svg>
+              </div>
+            </nav>
+
+            <!-- Summary -->
+            <section class="summary">
+              <div class="avatar-pair">
+                <div class="av yf">福</div>
+                <div class="av dd">豆</div>
+              </div>
+              <div class="meta">
+                <div class="pair-name">有福<span class="x">×</span>豆豆</div>
+                <div class="progress">
+                  <span class="day">Day 3</span>
+                  <span>共 7 天</span>
+                  <span class="mini-bar"><span class="fill"></span></span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Diary list -->
+            <section class="diary-list">
+
+              <!-- Day 1 -->
+              <article class="diary-card" data-day="1">
+                <div class="card-top">
+                  <span class="tag tag--wood">Day 1 · 5 月 25 日</span>
+                  <span class="time">
+                    <svg class="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    20:30
+                  </span>
+                </div>
+                <div class="sketch-wrap">
+                  <svg class="sketch" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                    <!-- doorway frame (looking outward from inside) -->
+                    <g stroke="#8B6F47" stroke-width="1.2" stroke-linecap="round" fill="none">
+                      <!-- lintel and door frame -->
+                      <path d="M100 8 L100 110"/>
+                      <path d="M220 8 L220 110"/>
+                      <path d="M96 8 L224 8"/>
+                      <!-- threshold -->
+                      <path d="M88 110 L232 110"/>
+                      <!-- floor planks perspective -->
+                      <path d="M88 110 L60 118" stroke-width="0.7" opacity="0.5"/>
+                      <path d="M232 110 L260 118" stroke-width="0.7" opacity="0.5"/>
+                    </g>
+                    <!-- mountains seen through doorway -->
+                    <g stroke="#8B6F47" stroke-width="0.8" fill="none" opacity="0.55">
+                      <path d="M104 60 L130 36 L156 52 L188 32 L218 50"/>
+                    </g>
+                    <!-- small house in the distance -->
+                    <g stroke="#8B6F47" stroke-width="0.7" opacity="0.55" fill="none">
+                      <path d="M168 56 L172 50 L176 56"/>
+                      <path d="M168 56 L168 64 L176 64 L176 56"/>
+                    </g>
+
+                    <!-- cat sitting in the middle of the doorway (back view) -->
+                    <g fill="#8B6F47">
+                      <!-- body -->
+                      <ellipse cx="160" cy="92" rx="14" ry="10"/>
+                      <!-- head -->
+                      <circle cx="160" cy="78" r="9"/>
+                      <!-- ears -->
+                      <path d="M154 72 L152 65 L158 70 Z"/>
+                      <path d="M166 72 L168 65 L162 70 Z"/>
+                      <!-- tail curling left -->
+                      <path d="M148 96 Q138 100 138 90 Q138 84 144 86" fill="none" stroke="#8B6F47" stroke-width="2" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- small suitcase next to her -->
+                    <g stroke="#8B6F47" stroke-width="1" fill="none" stroke-linejoin="round">
+                      <rect x="184" y="92" width="20" height="14" rx="1.5"/>
+                      <path d="M190 92 L190 88 Q190 86 192 86 L196 86 Q198 86 198 88 L198 92"/>
+                      <path d="M184 98 L204 98"/>
+                    </g>
+
+                    <!-- shadow under cat -->
+                    <ellipse cx="160" cy="106" rx="20" ry="2.5" fill="#8B6F47" opacity="0.15"/>
+                  </svg>
+                </div>
+                <div class="card-body">
+                  <h3 class="title">今天又来了个城里客人</h3>
+                  <p class="excerpt">上海来的橘猫,看起来挺规矩,就是有点呆。主人不在身边,她在门口愣了半天,我远远看着她,没出声。</p>
+                  <div class="sig">—— 有福</div>
+                </div>
+              </article>
+
+              <!-- Day 2 -->
+              <article class="diary-card" data-day="2">
+                <div class="card-top">
+                  <span class="tag tag--wood">Day 2 · 5 月 26 日</span>
+                  <span class="time">
+                    <svg class="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    19:10
+                  </span>
+                </div>
+                <div class="sketch-wrap">
+                  <svg class="sketch" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                    <!-- ground line -->
+                    <path d="M40 100 L280 100" stroke="#8B6F47" stroke-width="0.8" opacity="0.55"/>
+                    <!-- grass tufts -->
+                    <g stroke="#8B6F47" stroke-width="0.7" opacity="0.6" stroke-linecap="round">
+                      <path d="M70 100 L72 92"/>
+                      <path d="M76 100 L74 94"/>
+                      <path d="M250 100 L252 92"/>
+                      <path d="M256 100 L254 94"/>
+                      <path d="M260 100 L262 92"/>
+                    </g>
+                    <!-- 有福 · larger cat lying on the left -->
+                    <g fill="#8B6F47">
+                      <!-- body lying -->
+                      <ellipse cx="110" cy="88" rx="28" ry="11"/>
+                      <!-- head facing right -->
+                      <circle cx="136" cy="78" r="10"/>
+                      <!-- ears -->
+                      <path d="M129 70 L127 62 L134 68 Z"/>
+                      <path d="M142 70 L144 62 L137 68 Z"/>
+                      <!-- tail curled at back -->
+                      <path d="M84 88 Q72 80 76 96 Q80 100 88 96" fill="none" stroke="#8B6F47" stroke-width="2.2" stroke-linecap="round"/>
+                      <!-- eyes/nose just dots, looking right -->
+                      <circle cx="141" cy="78" r="1.1" fill="#F8F2E6"/>
+                    </g>
+
+                    <!-- 豆豆 · smaller cautious cat on the right, standing -->
+                    <g fill="#8B6F47">
+                      <ellipse cx="220" cy="92" rx="14" ry="9"/>
+                      <circle cx="220" cy="78" r="8"/>
+                      <path d="M214 72 L212 65 L218 70 Z"/>
+                      <path d="M226 72 L228 65 L222 70 Z"/>
+                      <!-- legs -->
+                      <rect x="210" y="96" width="2.5" height="6"/>
+                      <rect x="216" y="96" width="2.5" height="6"/>
+                      <rect x="224" y="96" width="2.5" height="6"/>
+                      <rect x="230" y="96" width="2.5" height="6"/>
+                      <!-- tail up curving slightly -->
+                      <path d="M232 88 Q244 80 238 70" fill="none" stroke="#8B6F47" stroke-width="2" stroke-linecap="round"/>
+                      <!-- eye facing left (toward 有福) -->
+                      <circle cx="215" cy="78" r="1.1" fill="#F8F2E6"/>
+                    </g>
+
+                    <!-- shadows -->
+                    <ellipse cx="110" cy="100" rx="36" ry="2" fill="#8B6F47" opacity="0.18"/>
+                    <ellipse cx="220" cy="103" rx="16" ry="1.8" fill="#8B6F47" opacity="0.18"/>
+
+                    <!-- subtle dotted line between them (eye contact) -->
+                    <g stroke="#8B6F47" stroke-width="0.8" stroke-dasharray="1.5 3" opacity="0.45">
+                      <path d="M147 78 L207 78"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-body">
+                  <h3 class="title">她终于不躲了</h3>
+                  <p class="excerpt">今天豆豆开始出来探索我的地盘了。她从院子的西边走,我在东边晒太阳,谁也不打扰谁。但她回头看了我两次。</p>
+                  <div class="sig">—— 有福</div>
+                </div>
+              </article>
+
+              <!-- Day 3 · shimmer -->
+              <article class="diary-card diary-card--shimmer" data-day="3">
+                <!-- top-left corner sparkle ribbon -->
+                <svg class="corner-spark" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2 L13.5 9 L20 10.5 L13.5 12 L12 19 L10.5 12 L4 10.5 L10.5 9 Z"/>
+                  <circle cx="19" cy="3" r="1.2"/>
+                  <circle cx="4.5" cy="18" r="1"/>
+                </svg>
+                <div class="card-top">
+                  <span class="tag tag--shimmer">
+                    <svg class="sparkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M12 3 L13.2 9 L19 10.5 L13.2 12 L12 18 L10.8 12 L5 10.5 L10.8 9 Z"/>
+                    </svg>
+                    闪闪时刻 · Day 3
+                  </span>
+                  <span class="time">
+                    <svg class="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    14:20
+                  </span>
+                </div>
+                <div class="sketch-wrap">
+                  <svg class="sketch" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                    <!-- distant mountains -->
+                    <g stroke="#8B6F47" stroke-width="0.7" opacity="0.45" fill="none">
+                      <path d="M20 50 L60 30 L100 46 L150 26 L200 44 L260 28 L300 46"/>
+                    </g>
+                    <!-- sun -->
+                    <circle cx="262" cy="22" r="6" fill="#C4915C" opacity="0.45"/>
+
+                    <!-- bridge silhouette -->
+                    <g fill="#8B6F47">
+                      <!-- water reflection -->
+                      <g opacity="0.32" stroke="#8B6F47" stroke-width="0.6" fill="none">
+                        <path d="M20 100 Q80 102 140 100 T260 100 T320 100"/>
+                        <path d="M40 104 L80 104 M120 104 L160 104 M210 104 L250 104"/>
+                      </g>
+                      <!-- 3 arches -->
+                      <g fill="none" stroke="#8B6F47" stroke-width="1">
+                        <path d="M40 92 Q70 78 100 92"/>
+                        <path d="M108 92 Q160 70 212 92"/>
+                        <path d="M220 92 Q250 78 280 92"/>
+                      </g>
+                      <!-- timber crisscross -->
+                      <g stroke="#8B6F47" stroke-width="0.4" opacity="0.5">
+                        <line x1="140" y1="82" x2="160" y2="88"/>
+                        <line x1="160" y1="88" x2="180" y2="82"/>
+                      </g>
+                      <!-- piers -->
+                      <rect x="98" y="86" width="10" height="6"/>
+                      <rect x="212" y="86" width="10" height="6"/>
+                      <!-- deck -->
+                      <rect x="20" y="84" width="280" height="1.2"/>
+                      <!-- railing top -->
+                      <rect x="20" y="80" width="280" height="0.6" opacity="0.85"/>
+                      <!-- balusters -->
+                      <g>
+                        <rect x="32" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="56" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="80" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="108" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="140" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="180" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="212" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="240" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="264" y="80.5" width="0.6" height="3.5"/>
+                        <rect x="288" y="80.5" width="0.6" height="3.5"/>
+                      </g>
+                      <!-- covered roof -->
+                      <path d="M22 76 L22 74 Q22 72 26 72 L120 72 L120 68 Q120 66 124 66 L196 66 Q200 66 200 68 L200 72 L294 72 Q298 72 298 74 L298 76 Z"/>
+                      <!-- eaves upturn -->
+                      <path d="M22 74 Q12 73 12 68 Q16 70 22 72 Z"/>
+                      <path d="M298 74 Q308 73 308 68 Q304 70 298 72 Z"/>
+                      <!-- central raised pavilion -->
+                      <path d="M148 66 L148 62 Q148 60 152 60 L168 60 Q172 60 172 62 L172 66 Z"/>
+                      <!-- finial -->
+                      <rect x="158" y="56" width="3" height="3"/>
+                      <circle cx="159.5" cy="55" r="1"/>
+                    </g>
+
+                    <!-- 有福 walking ahead -->
+                    <g fill="#8B6F47">
+                      <ellipse cx="146" cy="76" rx="6" ry="3"/>
+                      <circle cx="152" cy="73" r="3.2"/>
+                      <path d="M150 70 L149 67 L152 69 Z"/>
+                      <path d="M154 70 L155 67 L153 69 Z"/>
+                      <!-- tail up -->
+                      <path d="M140 75 Q132 70 134 64" fill="none" stroke="#8B6F47" stroke-width="1.5" stroke-linecap="round"/>
+                    </g>
+                    <!-- 豆豆 following behind -->
+                    <g fill="#8B6F47">
+                      <ellipse cx="128" cy="77" rx="5" ry="2.5"/>
+                      <circle cx="133" cy="74" r="2.8"/>
+                      <path d="M131 71 L130 68 L132.5 70 Z"/>
+                      <path d="M135 71 L136 68 L134 70 Z"/>
+                      <path d="M123 76 Q116 72 118 67" fill="none" stroke="#8B6F47" stroke-width="1.3" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- shimmer sparkles in air -->
+                    <g fill="#C4915C" opacity="0.7">
+                      <path d="M212 18 L213 22 L217 23 L213 24 L212 28 L211 24 L207 23 L211 22 Z"/>
+                      <path d="M50 36 L51 39 L54 40 L51 41 L50 44 L49 41 L46 40 L49 39 Z" opacity="0.6"/>
+                      <path d="M280 50 L281 53 L284 54 L281 55 L280 58 L279 55 L276 54 L279 53 Z" opacity="0.55"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-body">
+                  <h3 class="title">今天我带她去看了万安廊桥</h3>
+                  <p class="excerpt">她第一次跟我走过桥洞。木头的味道、溪水的声音、远处的山,她全都没见过。在桥中间她停下来,看着水面发呆,我没催她。</p>
+                  <div class="sig">—— 有福</div>
+                </div>
+              </article>
+
+            </section>
+
+          </div><!-- /page-scroll -->
+
+          <!-- Bottom fixed hint · 56px -->
+          <div class="bottom-hint">
+            下一篇日记预计 3 小时后送达
+            <svg class="env" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="13" rx="2"/>
+              <path d="M3 8l9 6 9-6"/>
+            </svg>
+          </div>
+
+        </div><!-- /screen-content -->
+
+      </div><!-- /screen -->
+    </div><!-- /iphone -->
+  </div><!-- /desk -->
+
+  <script>
+    (function () {
+      const sc      = document.getElementById('screen-content');
+      const back    = document.getElementById('back-btn');
+      const share   = document.getElementById('share-btn');
+      const toast   = document.getElementById('toast');
+      const cards   = document.querySelectorAll('.diary-card');
+
+      // Back → Page 4
+      back.addEventListener('click', () => {
+        sc.classList.add('is-leaving-back');
+        setTimeout(() => { window.location.href = 'Page 4 - Pass.html'; }, 200);
+      });
+
+      // Share → toast (no real page)
+      let shareTimer;
+      share.addEventListener('click', () => {
+        toast.textContent = '分享给豆豆的家人';
+        toast.classList.add('is-visible');
+        clearTimeout(shareTimer);
+        shareTimer = setTimeout(() => toast.classList.remove('is-visible'), 1400);
+      });
+
+      // Cards → Page 6
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          sc.classList.add('is-leaving-forward');
+          setTimeout(() => { window.location.href = 'Page 6 - Diary Detail.html'; }, 200);
+        });
+      });
+
+      // ---------- Demo mode (hidden bottom-right entry) ----------
+      const demoTrigger = document.getElementById('demo-trigger');
+      const demoMask    = document.getElementById('demo-mask');
+      const demoPanel   = document.getElementById('demo-panel');
+      const demoClose   = document.getElementById('demo-close');
+
+      function openDemo() {
+        demoMask.classList.add('is-open');
+        demoPanel.classList.add('is-open');
+      }
+      function closeDemo() {
+        demoMask.classList.remove('is-open');
+        demoPanel.classList.remove('is-open');
+      }
+
+      demoTrigger.addEventListener('click', openDemo);
+      demoMask.addEventListener('click', closeDemo);
+      demoClose.addEventListener('click', closeDemo);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDemo();
+      });
+
+      demoPanel.addEventListener('click', (e) => {
+        const btn = e.target.closest('.demo-btn');
+        if (!btn) return;
+        const go = btn.dataset.go;
+        const target = {
+          page6: 'Page 6 - Diary Detail.html',
+          page8: 'Page 8 - Memory Card.html',
+          reset: 'Page 1 - Home.html'
+        }[go];
+        if (!target) return;
+        closeDemo();
+        sc.classList.add('is-leaving-forward');
+        setTimeout(() => { window.location.href = target; }, 200);
+      });
+    })();
+  </script>
+</body>
+</html>

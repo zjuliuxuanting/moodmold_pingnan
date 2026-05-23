@@ -11,7 +11,7 @@ function formatTimestamp(iso: string): string {
   return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-const PINGNAN_BG = 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80';
+const PINGNAN_BG = '/assets/backgrounds/bg-lanqiao.png';
 
 export default function CheckinPage() {
   const { tagId } = useParams<{ tagId: string }>();

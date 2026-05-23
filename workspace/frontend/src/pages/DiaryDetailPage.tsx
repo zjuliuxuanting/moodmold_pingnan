@@ -331,7 +331,15 @@ export default function DiaryDetailPage() {
 
         {/* Hero Image */}
         <div className="mt-3 mx-4 rounded-[16px] overflow-hidden shadow-base">
-          <HeroBridgeSVG />
+          {dayNumber === 3 ? (
+            <img
+              src="/assets/composites/shimmer-day3-main.png"
+              alt="闪闪时刻"
+              className="w-full h-auto block"
+            />
+          ) : (
+            <HeroBridgeSVG />
+          )}
         </div>
 
         {/* Title */}

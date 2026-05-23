@@ -18,38 +18,19 @@ const benefitCards = [
     iconColor: 'bg-accent-primary',
     title: '每日有福日记',
     desc: '村猫视角的真实陪伴记录',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="6" width="18" height="13" rx="2"/>
-        <path d="M3 8l9 6 9-6"/>
-      </svg>
-    ),
+    icon: <img src="/assets/icons/icon-p1-envelope.png" alt="" className="w-7 h-7 object-contain" />,
   },
   {
     iconColor: 'bg-accent-wood',
     title: '屏南旅行纪念卡',
     desc: '寄养结束的数字纪念品',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3.5" y="10" width="17" height="10.5" rx="1.5"/>
-        <path d="M2.5 7h19v3h-19z"/>
-        <path d="M12 7v13.5"/>
-        <path d="M12 7s-2-3.5-4-3.5S6 6 8 7"/>
-        <path d="M12 7s2-3.5 4-3.5S18 6 16 7"/>
-      </svg>
-    ),
+    icon: <img src="/assets/icons/icon-p1-gift.png" alt="" className="w-7 h-7 object-contain" />,
   },
   {
     iconColor: 'bg-accent-shimmer',
     title: '非遗变装解锁',
     desc: '廊桥斗笠、古厝戏服、村猫荣誉卡',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="9" r="5.5"/>
-        <path d="M12 14.5l-2 7 2-1.5 2 1.5-2-7"/>
-        <path d="M10 9l1.5 1.5L14 7.5"/>
-      </svg>
-    ),
+    icon: <img src="/assets/icons/icon-p1-badge.png" alt="" className="w-7 h-7 object-contain" />,
   },
 ];
 
@@ -112,16 +93,12 @@ export default function HomePage() {
               YF-001
             </span>
             {/* Photo circle */}
-            <div
-              className="w-[128px] h-[128px] rounded-full border-[1.5px] border-accent-wood flex items-center justify-center text-center shadow-[0_4px_20px_rgba(139,111,71,0.18)]"
-              style={{
-                background: 'radial-gradient(circle at 36% 32%, #f0d9b8 0%, #d6a877 45%, #a3784c 100%)',
-              }}
-            >
-              <div className="font-[family-name:var(--font-serif)] text-[13px] text-white/90 tracking-[0.06em] leading-[1.4]" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.15)' }}>
-                <span className="block text-[32px] font-semibold mb-1 tracking-[0.1em]">有福</span>
-                照片占位
-              </div>
+            <div className="w-[128px] h-[128px] rounded-full border-[1.5px] border-accent-wood overflow-hidden shadow-[0_4px_20px_rgba(139,111,71,0.18)] bg-accent-cream">
+              <img
+                src="/assets/youfu/avatar-youfu.png"
+                alt="有福"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
 
