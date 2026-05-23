@@ -160,11 +160,11 @@ function ModalOverlay({
   item: CollectionItem;
   onClose: () => void;
 }) {
-  const svgMap: Record<string, React.ReactNode> = {
-    passport: <PassportSVG />,
-    hat: <HatSVG />,
-    robe: <RobeSVG />,
-    badge: <BadgeSVG />,
+  const imgMap: Record<string, string> = {
+    passport: '/assets/decorations/stamp-pingnan-pass.png',
+    hat: '/assets/skins/skin-bamboo-hat.png',
+    robe: '/assets/skins/skin-opera-collar.png',
+    badge: '/assets/badges/badge-villagecat.png',
   };
 
   useEffect(() => {
@@ -193,8 +193,8 @@ function ModalOverlay({
 
         <div className="p-6 pt-5">
           <div className="flex justify-center mb-4">
-            <div className="w-[180px] h-[230px]">
-              {svgMap[item.id]}
+            <div className="w-[180px] h-[230px] flex items-center justify-center">
+              <img src={imgMap[item.id]} alt={item.name} className="max-w-full max-h-full object-contain" />
             </div>
           </div>
 
@@ -360,12 +360,18 @@ export default function CollectionPage() {
               {/* Star for unlocked */}
               {item.unlocked && <ShimmerStar />}
 
-              {/* SVG illustration */}
+              {/* Illustration */}
               <div className="absolute inset-0 flex items-center justify-center p-4 pt-10 pb-8">
-                {item.id === 'passport' && <PassportSVG />}
-                {item.id === 'hat' && <HatSVG />}
-                {item.id === 'robe' && <RobeSVG />}
-                {item.id === 'badge' && <BadgeSVG />}
+                <img
+                  src={
+                    item.id === 'passport' ? '/assets/decorations/stamp-pingnan-pass.png'
+                    : item.id === 'hat' ? '/assets/skins/skin-bamboo-hat.png'
+                    : item.id === 'robe' ? '/assets/skins/skin-opera-collar.png'
+                    : '/assets/badges/badge-villagecat.png'
+                  }
+                  alt={item.name}
+                  className="max-w-full max-h-full object-contain"
+                />
               </div>
 
               {/* Lock overlay */}

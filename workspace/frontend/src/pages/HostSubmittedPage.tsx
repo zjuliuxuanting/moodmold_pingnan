@@ -109,21 +109,13 @@ export default function HostSubmittedPage() {
                   今天我们晒了一下午太阳
                 </h2>
 
-                {/* Photo placeholder */}
-                <div className="mx-auto mt-4 w-[200px] h-[120px] rounded-[12px] border border-[rgba(139,111,71,0.22)] flex flex-col items-center justify-center gap-[6px] text-accent-wood relative overflow-hidden"
-                  style={{ background: 'linear-gradient(160deg, #EBE0CC 0%, #D9C9A7 100%)' }}>
-                  <div
-                    className="absolute inset-0 opacity-10 pointer-events-none"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.0' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.4  0 0 0 0 0.25  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                      mixBlendMode: 'multiply',
-                    }}
+                {/* Photo preview */}
+                <div className="mx-auto mt-4 w-[200px] h-[120px] rounded-[12px] border border-[rgba(139,111,71,0.22)] overflow-hidden shadow-soft">
+                  <img
+                    src="/assets/composites/feedback-sunbathing.png"
+                    alt="今天我们晒了一下午太阳"
+                    className="w-full h-full object-cover"
                   />
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-55">
-                    <path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
-                  <span className="text-sm font-medium tracking-[0.04em] opacity-85">你刚上传的照片之一</span>
                 </div>
 
                 {/* Diary body */}

@@ -16,11 +16,16 @@ interface PetCardData {
   tasks: PetTask[]
 }
 
+const PET_AVATARS: Record<string, string> = {
+  doudou: '/assets/doudou/doudou.png',
+  xiaohua: '/assets/xiaohua/xiaohua.png',
+}
+
 const mockPets: PetCardData[] = [
   {
     tagId: 'doudou',
     name: '豆豆',
-    breed: '上海橘猫',
+    breed: '上海·英短',
     day: 3,
     totalDays: 7,
     isNew: false,
@@ -34,7 +39,7 @@ const mockPets: PetCardData[] = [
   {
     tagId: 'xiaohua',
     name: '小花',
-    breed: '杭州英短',
+    breed: '杭州·查理王犬',
     day: 1,
     totalDays: 5,
     isNew: true,
@@ -148,33 +153,35 @@ export default function HostPetsPage() {
               >
                 {/* Avatar */}
                 <div
-                  className="w-20 h-20 rounded-full border-2 border-accent-wood shrink-0 overflow-hidden flex items-center justify-center relative cursor-pointer"
+                  className="w-20 h-20 rounded-full border-2 border-accent-wood shrink-0 overflow-hidden flex items-center justify-center relative cursor-pointer bg-accent-cream"
                   style={{
                     boxShadow: '0 3px 12px rgba(139,111,71,0.18)',
-                    background: pet.isNew
-                      ? 'radial-gradient(circle at 36% 30%, #efe7dc 0%, #c2b4a4 50%, #7e7466 100%)'
-                      : 'radial-gradient(circle at 36% 30%, #ffd9a8 0%, #f0b97a 45%, #c9885a 100%)',
                   }}
                   onClick={() => navigate(`/pet/${pet.tagId}`)}
                 >
-                  {/* Cat face */}
-                  <span className="block w-full h-full relative">
-                    {/* Left eye */}
-                    <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] left-[32%]" />
-                    {/* Right eye */}
-                    <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] right-[32%]" />
-                    {/* Nose */}
-                    <span
-                      className="absolute left-1/2 top-[54%] -translate-x-1/2"
-                      style={{
-                        width: 0,
-                        height: 0,
-                        borderLeft: '4px solid transparent',
-                        borderRight: '4px solid transparent',
-                        borderTop: '5px solid rgba(139,90,60,0.85)',
-                      }}
+                  {PET_AVATARS[pet.tagId] ? (
+                    <img
+                      src={PET_AVATARS[pet.tagId]}
+                      alt={pet.name}
+                      className="w-full h-full object-cover"
                     />
-                  </span>
+                  ) : (
+                    /* Fallback cat face */
+                    <span className="block w-full h-full relative">
+                      <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] left-[32%]" />
+                      <span className="absolute w-[6px] h-[6px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] right-[32%]" />
+                      <span
+                        className="absolute left-1/2 top-[54%] -translate-x-1/2"
+                        style={{
+                          width: 0,
+                          height: 0,
+                          borderLeft: '4px solid transparent',
+                          borderRight: '4px solid transparent',
+                          borderTop: '5px solid rgba(139,90,60,0.85)',
+                        }}
+                      />
+                    </span>
+                  )}
                 </div>
 
                 {/* Meta info */}
