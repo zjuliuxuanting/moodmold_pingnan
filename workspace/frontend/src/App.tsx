@@ -20,6 +20,7 @@ import HostMonthPage from './pages/HostMonthPage'
 import HostRegisterPage from './pages/HostRegisterPage'
 import CheckinPage from './pages/CheckinPage'
 import QrPage from './pages/QrPage'
+import FootprintPage from './pages/FootprintPage'
 
 function PhoneLayout() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/host/month" element={<HostMonthPage />} />
         <Route path="/checkin/:tagId" element={<CheckinPage />} />
         <Route path="/qr" element={<QrPage />} />
+        <Route path="/footprint/:tagId" element={<FootprintPage />} />
         <Route path="*" element={<HomePage />} />
       </Route>
     </Routes>

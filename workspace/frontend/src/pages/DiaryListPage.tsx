@@ -262,16 +262,36 @@ function DiaryCard({
   excerpt,
   isShimmer,
   onClick,
-}: DiaryEntry & { onClick: () => void }) {
+  onFootprintClick,
+}: DiaryEntry & { onClick: () => void; onFootprintClick?: () => void }) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
+  };
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className={`w-full text-left rounded-card bg-card-bg shadow-base overflow-hidden cursor-pointer transition-transform active:scale-[0.98] ${
+      onKeyDown={handleKeyDown}
+      className={`relative w-full text-left rounded-card bg-card-bg shadow-base overflow-hidden cursor-pointer transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-accent-primary ${
         isShimmer ? 'border-[1.5px] border-accent-shimmer' : ''
       }`}
       style={isShimmer ? { background: 'linear-gradient(135deg, #FFF8EE 0%, #FFF4E3 50%, #FFF8EE 100%)' } : undefined}
     >
+      {/* 闪闪时刻专属：今日足迹 CTA（右上角） */}
+      {isShimmer && onFootprintClick && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onFootprintClick(); }}
+          className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 h-7 pl-2 pr-3 rounded-pill bg-white/95 backdrop-blur-sm border border-accent-shimmer/50 text-accent-shimmer font-[family-name:var(--font-sans)] text-[11px] font-medium shadow-[0_2px_8px_rgba(196,145,92,0.18)] active:scale-95 transition-transform"
+        >
+          <span>🐾</span>
+          <span>今日足迹</span>
+        </button>
+      )}
       {/* Header row */}
       <div className="flex items-center gap-2 px-4 pt-4">
         <span
@@ -325,7 +345,7 @@ function DiaryCard({
           style={{ background: 'linear-gradient(90deg, transparent, #C4915C 20%, #E8B87A 50%, #C4915C 80%, transparent)' }}
         />
       )}
-    </button>
+    </div>
   );
 }
 
@@ -457,6 +477,7 @@ export default function DiaryListPage() {
               key={entry.day}
               {...entry}
               onClick={() => navigate(`/diary/${tagId}/${entry.day}`)}
+              onFootprintClick={entry.isShimmer ? () => navigate(`/footprint/${tagId}`) : undefined}
             />
           ))}
         </div>

@@ -454,6 +454,32 @@ export default function DiaryDetailPage() {
           </button>
         </div>
 
+        {/* Footprint entry card — 跳到 P5.5 今日足迹 */}
+        <div className="mx-4 mt-4">
+          <button
+            type="button"
+            onClick={() => navigate(`/footprint/${tagId}`)}
+            className="w-full rounded-card overflow-hidden cursor-pointer transition-transform active:scale-[0.98] border border-border-light/60 bg-card-bg"
+          >
+            <div className="flex items-center px-4 py-4 gap-3">
+              <div className="w-11 h-11 rounded-full bg-accent-soft flex items-center justify-center flex-shrink-0">
+                <span className="text-[20px]">📍</span>
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="font-[family-name:var(--font-serif)] text-[15px] font-medium text-text-primary leading-tight">
+                  查看{petName}今天走过哪里
+                </div>
+                <div className="mt-1 font-[family-name:var(--font-sans)] text-[12px] text-text-tertiary leading-tight">
+                  由项圈记录 · 4 处景点 · 健康一切正常
+                </div>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 text-text-tertiary">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </div>
+          </button>
+        </div>
+
         {/* Bottom spacer for fixed buttons */}
         <div className="h-4" />
       </div>
