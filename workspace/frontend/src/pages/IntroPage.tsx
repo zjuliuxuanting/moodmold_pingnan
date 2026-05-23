@@ -44,11 +44,12 @@ export default function IntroPage() {
         <div className="nav-inner">
           <div className="logo">Moodmold</div>
           <div className="nav-links">
-            <a href="#solution">解决方案</a>
-            <a href="#hardware">硬件设计</a>
-            <a href="#demo">体验产品</a>
-            <a href="#evidence">在地证据</a>
-            <a href="#business">商业模型</a>
+            <a href="#pillars">三支点</a>
+            <a href="#hardware">硬件</a>
+            <a href="#villager">村民管控</a>
+            <a href="#ip">数字孪生</a>
+            <a href="#demo">体验</a>
+            <a href="#business">商业</a>
             <Link to="/booking" className="nav-cta">立即预约 →</Link>
           </div>
         </div>
@@ -65,12 +66,12 @@ export default function IntroPage() {
               被<span className="accent">温柔记得</span>
             </h1>
             <p className="hero-subtitle">
-              不是简单的寄养，是一段被讲述的乡村陪伴<br />
-              由真实村猫"有福"作为东道主
+              挂牌确认身份 × 项圈感知生命 × 数字孪生看见每一天<br />
+              由真实村猫「有福」作为东道主
             </p>
             <div className="hero-buttons">
               <a href="#demo" className="btn-primary">立即体验产品 →</a>
-              <a href="#video" className="btn-secondary">观看 90 秒演示</a>
+              <a href="#pillars" className="btn-secondary">查看三个支点</a>
             </div>
           </div>
           <div className="hero-visual">
@@ -128,48 +129,61 @@ export default function IntroPage() {
         </div>
       </section>
 
-      {/* === ③ 解决方案 + 项圈 === */}
-      <section id="solution">
+      {/* === ③ 三个支点 === */}
+      <section id="pillars" className="pillars-section">
         <div className="container">
           <div className="reveal">
-            <div className="section-label">解决方案 / The Solution</div>
-            <h2 className="section-title">屏南乡村寄养<br />× 数字孪生 × 真实村猫 IP</h2>
-            <p className="section-subtitle">让每一只城市宠物，在屏南拥有一段被讲述的乡村时光</p>
+            <div className="section-label">寄养质量体系 / The Three Pillars</div>
+            <h2 className="section-title">三个支点<br />支撑乡村寄养的全链路</h2>
+            <p className="section-subtitle">不是又一个寄养平台 — 是「硬件 + 软件 + 内容」三位一体的质量体系</p>
           </div>
 
-          <div className="solution-grid">
-            <div className="solution-card reveal">
-              <div className="solution-icon c1">🏡</div>
-              <h3>在地民宿合作</h3>
-              <ul>
-                <li>屏南龙潭村首批认证民宿</li>
-                <li>《寄养环境标准 V2.0》</li>
-                <li>民宿主获 60% 寄养费</li>
+          <div className="pillars-grid">
+            <a href="#hardware" className="pillar b2 reveal">
+              <div className="pillar-tag">B2 · 宠主体验</div>
+              <h3>管好寄养</h3>
+              <p className="sub">硬件感知 · 服务流程 · 透明可视</p>
+              <ul className="pillar-points">
+                <li>智能项圈 6 大功能模块</li>
+                <li>5 步全链路服务流程</li>
+                <li>数字孪生日报 3 秒内推送</li>
               </ul>
-            </div>
-            <div className="solution-card reveal">
-              <div className="solution-icon c2">✉️</div>
-              <h3>数字孪生情感连接</h3>
-              <ul>
-                <li>民宿主拍照 5 分钟搞定</li>
-                <li>AI 自动生成「有福」傲娇日记</li>
-                <li>日报 + 不定时闪闪时刻</li>
+              <span className="pillar-cta">查看硬件设计 →</span>
+            </a>
+
+            <a href="#villager" className="pillar b1 reveal">
+              <div className="pillar-tag">B1 · 村民环境</div>
+              <h3>选好村民</h3>
+              <p className="sub">准入门槛 · 培训体系 · SOP 监督</p>
+              <ul className="pillar-points">
+                <li>4 维准入标准（空间/安全/卫生/温度）</li>
+                <li>Day 0/1/7/30 四步评级</li>
+                <li>平台抽检 + 宠主评分双闭环</li>
               </ul>
-            </div>
-            <div className="solution-card featured reveal">
-              <div className="solution-icon c3">📡</div>
-              <h3>3D 打印智能项圈</h3>
-              <ul>
-                <li>STM32 + GPS / 北斗双模定位</li>
-                <li>体温 + 活动量 + 佩戴感知</li>
-                <li>IP67 防水 · ≤60g 食品级硅胶</li>
+              <span className="pillar-cta">查看村民管控 →</span>
+            </a>
+
+            <a href="#ip" className="pillar b3 reveal">
+              <div className="pillar-tag">B3 · 数字孪生宣传</div>
+              <h3>讲好故事</h3>
+              <p className="sub">有福 IP · 内容矩阵 · 增长飞轮</p>
+              <ul className="pillar-points">
+                <li>真实村猫「有福」第一人称叙事</li>
+                <li>三大内容资产（通行证/日记/纪念卡）</li>
+                <li>非遗挂件出图自带传播属性</li>
               </ul>
-            </div>
+              <span className="pillar-cta">查看数字孪生 →</span>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* === ③.5 硬件设计 === */}
+      {/* Part 1 标识 */}
+      <div className="part-marker">
+        <span className="num">PART 1 · 宠主寄养服务质量保证体系</span>
+      </div>
+
+      {/* === Part 1 / 硬件设计 === */}
       <section id="hardware" className="hardware-section">
         <div className="container">
           <div className="reveal">
@@ -264,13 +278,210 @@ export default function IntroPage() {
         </div>
       </section>
 
+      {/* === Part 1 / 服务流程 === */}
+      <section id="flow" className="flow-section">
+        <div className="container">
+          <div className="reveal">
+            <div className="section-label">服务流程 / Service Flow</div>
+            <h2 className="section-title">从预约到接回<br />全链路透明</h2>
+            <p className="section-subtitle">5 步闭环 · 每一步宠主端都能实时看见</p>
+          </div>
+
+          <div className="flow-track reveal">
+            <div className="flow-step">
+              <div className="step-num">1</div>
+              <h4>扫码绑定</h4>
+              <p>挂牌关联宠主<br />30 秒完成</p>
+            </div>
+            <div className="flow-step">
+              <div className="step-num">2</div>
+              <h4>每日打卡</h4>
+              <p>托管方拍照<br />写一句话</p>
+            </div>
+            <div className="flow-step">
+              <div className="step-num">3</div>
+              <h4>数字孪生日报</h4>
+              <p>AI 自动出图<br />3 秒推送宠主</p>
+            </div>
+            <div className="flow-step">
+              <div className="step-num">4</div>
+              <h4>寄养纪念卡</h4>
+              <p>结束自动生成<br />可分享/打印</p>
+            </div>
+            <div className="flow-step">
+              <div className="step-num">5</div>
+              <h4>接回评价</h4>
+              <p>五星好评<br />闭环 NPS</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Part 2 标识 */}
+      <div className="part-marker alt">
+        <span className="num">PART 2 · 村民寄养环境质量控制</span>
+      </div>
+
+      {/* === Part 2 / 村民管控 === */}
+      <section id="villager" className="villager-section">
+        <div className="container">
+          <div className="reveal">
+            <div className="section-label">村民管控 / Villager Quality Control</div>
+            <h2 className="section-title">不是谁都能做寄养<br />我们制定标准、村民执行、宠主验证</h2>
+            <p className="section-subtitle">三道门槛 — 环境准入 → 培训上岗 → 持续监督</p>
+          </div>
+
+          <div className="standard-grid reveal">
+            <div className="standard-card">
+              <span className="std-icon">🏠</span>
+              <h4>空间</h4>
+              <p>独立宠物活动区 ≥ 5 m²<br />通风采光良好</p>
+            </div>
+            <div className="standard-card">
+              <span className="std-icon">🛡️</span>
+              <h4>安全</h4>
+              <p>封窗 / 围墙到位<br />无危险物、无有毒植物</p>
+            </div>
+            <div className="standard-card">
+              <span className="std-icon">🧼</span>
+              <h4>卫生</h4>
+              <p>每日消毒 + 粪便清理 SOP<br />打卡可追溯</p>
+            </div>
+            <div className="standard-card">
+              <span className="std-icon">🌡️</span>
+              <h4>温度</h4>
+              <p>室内 18-28°C<br />极端天气有预案</p>
+            </div>
+          </div>
+
+          <div className="training-track reveal">
+            <div className="training-step">
+              <div className="day">DAY 0</div>
+              <h4>准入审核</h4>
+              <p>环境照片 + 面谈</p>
+            </div>
+            <div className="training-step">
+              <div className="day">DAY 1</div>
+              <h4>线上培训</h4>
+              <p>SOP · 平台操作 · 摄影技巧</p>
+            </div>
+            <div className="training-step">
+              <div className="day">DAY 7</div>
+              <h4>试用期</h4>
+              <p>接第一只宠物<br />导师远程支持</p>
+            </div>
+            <div className="training-step">
+              <div className="day">DAY 30</div>
+              <h4>正式评级</h4>
+              <p>金 / 银 / 铜牌<br />宠主评分 + 平台抽检</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Part 3 标识 */}
+      <div className="part-marker tri">
+        <span className="num">PART 3 · 基于数字孪生的宣传策略</span>
+      </div>
+
+      {/* === Part 3 / 数字孪生宣传 === */}
+      <section id="ip" className="ip-section">
+        <div className="container">
+          <div className="reveal">
+            <div className="section-label">数字孪生 / Storytelling Engine</div>
+            <h2 className="section-title">数字孪生不是噱头<br />是传播引擎</h2>
+            <p className="section-subtitle">每天给宠主的不是通知 — 是可分享的内容</p>
+          </div>
+
+          <div className="ip-hero reveal">
+            <div className="ip-avatar">
+              <img src="/assets/youfu/avatar-youfu.png" alt="有福" />
+            </div>
+            <div className="ip-text">
+              <span className="ip-role">本村猫 IP · 屏南龙潭村</span>
+              <h3>这是有福</h3>
+              <p>屏南龙潭村的本村猫，Moodmold 的 IP 角色 — 在每一篇宠物日记里以「第一人称」叙述城里客人在屏南的乡村生活。</p>
+              <p>本地猫 = 在地性 = 真实感 = 信任背书。每一段日记 = 一次自带传播属性的乡村文旅明信片。</p>
+              <p className="signature">—— 有福</p>
+            </div>
+          </div>
+
+          <div className="content-matrix reveal">
+            <div className="content-card">
+              <div className="role">品牌入口</div>
+              <h4>屏南通行证</h4>
+              <p>"宠物拿到了一张<br />屏南的身份证"</p>
+              <div className="channel">扫码即看 · 线下民宿展示</div>
+            </div>
+            <div className="content-card">
+              <div className="role">社交素材</div>
+              <h4>每日日记</h4>
+              <p>"今天有福<br />带豆豆去了廊桥..."</p>
+              <div className="channel">朋友圈 9 宫格 · 小红书</div>
+            </div>
+            <div className="content-card">
+              <div className="role">传播终点</div>
+              <h4>寄养纪念卡</h4>
+              <p>"一段值得<br />珍藏的乡村回忆"</p>
+              <div className="channel">可打印 · 可分享</div>
+            </div>
+          </div>
+
+          <h3 className="reveal" style={{ marginTop: 60, fontFamily: "'Noto Serif SC', serif", fontSize: 20, color: '#3E3A36', fontWeight: 500 }}>
+            非遗挂件 × 数字孪生出图
+          </h3>
+          <p className="reveal" style={{ fontSize: 14, color: '#6B6560', marginTop: 6 }}>
+            宠物照片叠加屏南非遗元素 — 斗笠 / 廊桥 / 古厝戏服 / 村猫荣誉 — 每张出图都是一张可分享的屏南文旅明信片
+          </p>
+          <div className="heritage-grid reveal">
+            <div className="heritage-item">
+              <div className="h-img"><img src="/assets/decorations/stamp-pingnan-pass.png" alt="屏南通行证" /></div>
+              <div className="h-name">屏南通行证</div>
+              <div className="h-day">DAY 1 · 入村身份</div>
+            </div>
+            <div className="heritage-item">
+              <div className="h-img"><img src="/assets/skins/skin-bamboo-hat.png" alt="龙潭斗笠" /></div>
+              <div className="h-name">龙潭斗笠</div>
+              <div className="h-day">DAY 3 · 廊桥非遗</div>
+            </div>
+            <div className="heritage-item">
+              <div className="h-img"><img src="/assets/skins/skin-opera-collar.png" alt="古厝戏服" /></div>
+              <div className="h-name">古厝戏服</div>
+              <div className="h-day">DAY 5 · 古戏台</div>
+            </div>
+            <div className="heritage-item">
+              <div className="h-img"><img src="/assets/badges/badge-villagecat.png" alt="荣誉村猫" /></div>
+              <div className="h-name">荣誉村猫</div>
+              <div className="h-day">DAY 7 · 寄养完成</div>
+            </div>
+          </div>
+
+          <div className="flywheel reveal">
+            <h4>用户参与度增长飞轮</h4>
+            <div className="flywheel-chain">
+              <span className="flywheel-node green">宠主寄养</span>
+              <span className="flywheel-arrow">→</span>
+              <span className="flywheel-node wood">收到日记</span>
+              <span className="flywheel-arrow">→</span>
+              <span className="flywheel-node shimmer">主动分享</span>
+              <span className="flywheel-arrow">→</span>
+              <span className="flywheel-node green">新宠主看见</span>
+              <span className="flywheel-arrow">→</span>
+              <span className="flywheel-node wood">扫码绑定</span>
+              <span className="flywheel-arrow">→</span>
+              <span className="flywheel-node shimmer">屏南文旅曝光</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* === ④ Demo 嵌入 === */}
       <section id="demo" className="demo-section">
         <div className="container">
           <div className="reveal" style={{ textAlign: 'center' }}>
             <div className="section-label">产品体验 / Try It Now</div>
             <h2 className="section-title">现在就体验完整产品</h2>
-            <p className="section-subtitle">扫码体验 · iframe 直接交互 · 或观看 90 秒演示视频</p>
+            <p className="section-subtitle">右侧手机框直接交互 · 或扫码在手机上体验双端</p>
           </div>
 
           <div className="demo-wrap">
@@ -310,19 +521,6 @@ export default function IntroPage() {
             </div>
           </div>
 
-          {/* 视频区 */}
-          {/* 完成后替换为: <video controls poster="/assets/video-cover.jpg"><source src="/assets/demo-video.mp4" type="video/mp4" /></video> */}
-          <div
-            id="video"
-            className="video-container reveal"
-            onClick={() => alert('演示视频即将上线 · 待录制完成后填入链接')}
-          >
-            <div className="placeholder">
-              <div className="video-play" />
-              <div className="video-title">90 秒产品演示视频</div>
-              <div className="video-subtitle">即将上线 · 含有福日记完整流程</div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -498,7 +696,7 @@ export default function IntroPage() {
               <h5>产品体验</h5>
               <Link to="/booking">宠主端 Demo</Link>
               <Link to="/host">民宿端 Demo</Link>
-              <a href="#video">演示视频</a>
+              <a href="#demo">体验入口</a>
             </div>
             <div className="footer-section">
               <h5>联系 / 致谢</h5>
