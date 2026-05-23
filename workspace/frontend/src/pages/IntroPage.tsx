@@ -565,7 +565,7 @@ export default function IntroPage() {
                 <div className="author">王青</div>
               </div>
               <div className="quote c3 reveal">
-                <p className="text">"我们龙潭有 200 多个回乡老村民和新村民，缺一个让大家稳定营生的副业。"</p>
+                <p className="text">"我们龙潭有一批回乡老村民和新村民，缺一个让大家稳定营生的副业。"</p>
                 <div className="author">王青</div>
               </div>
             </div>
@@ -581,7 +581,7 @@ export default function IntroPage() {
               <div className="label">家明确入驻意愿</div>
             </div>
             <div className="stat">
-              <div className="num">200+</div>
+              <div className="num">20+</div>
               <div className="label">龙潭村可触达民宿基数</div>
             </div>
           </div>
