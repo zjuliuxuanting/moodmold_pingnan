@@ -192,6 +192,17 @@ export default function IntroPage() {
             <p className="section-subtitle">6 大功能模块 · 7-14 天续航 · IP67 全密封灌胶</p>
           </div>
 
+          <div className="hw-showcase reveal">
+            <div className="hw-shot product">
+              <img src="/assets/hardware/product-collar.png" alt="3D 打印智能项圈产品图" />
+              <div className="shot-label">产品图 · 3D 打印外壳</div>
+            </div>
+            <div className="hw-shot lifestyle">
+              <img src="/assets/hardware/lifestyle-collar.png" alt="有福佩戴智能项圈" />
+              <div className="shot-label">效果图 · 有福在屏南龙潭村</div>
+            </div>
+          </div>
+
           <div className="hw-wrap">
             <div className="hw-schematic reveal">
               <img src="/assets/hardware/schematic-wearable.png" alt="项圈主板原理图" />
@@ -658,16 +669,20 @@ export default function IntroPage() {
 
           <div className="team-grid">
             <div className="team-card reveal">
-              <div className="team-avatar">CJY</div>
-              <h4>陈静怡</h4>
+              <div className="team-avatar">
+                <img src="/assets/team/chenjingyi.jpg" alt="陈静宜" />
+              </div>
+              <h4>陈静宜</h4>
               <div className="team-role">PM / 设计 / 内容</div>
               <p>负责产品设计、内容叙事、整体协作<br />主导产品方向与视觉系统</p>
             </div>
             <div className="team-card reveal">
-              <div className="team-avatar">DEV</div>
-              <h4>技术伙伴</h4>
-              <div className="team-role">全栈开发</div>
-              <p>负责双端 H5 集成、数据流、部署<br />Claude Code + Vercel 工作流</p>
+              <div className="team-avatar">
+                <img src="/assets/team/liuxuanting.jpg" alt="刘轩廷" />
+              </div>
+              <h4>刘轩廷</h4>
+              <div className="team-role">技术 / 硬件 / 全栈</div>
+              <p>负责智能项圈硬件设计、双端 H5 集成、数据流、部署<br />Claude Code + Vercel 工作流</p>
             </div>
           </div>
 

@@ -713,6 +713,48 @@
 /* === 硬件设计区 === */
 .intro-page .hardware-section { background: linear-gradient(180deg, #FAF7F2 0%, #F5F1EA 100%); }
 
+.intro-page .hw-showcase {
+  display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px;
+  margin-top: 50px;
+  margin-bottom: 16px;
+}
+.intro-page .hw-shot {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(216, 210, 197, 0.5);
+  box-shadow: 0 12px 32px rgba(62, 58, 54, 0.06);
+  transition: transform 0.3s;
+  position: relative;
+}
+.intro-page .hw-shot:hover { transform: translateY(-3px); }
+.intro-page .hw-shot.product { background: linear-gradient(135deg, #F5F1EA 0%, #E8DCC8 100%); }
+.intro-page .hw-shot.lifestyle { background: #1a1a1a; }
+.intro-page .hw-shot img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  aspect-ratio: 1 / 1;
+}
+.intro-page .hw-shot.lifestyle img { aspect-ratio: 1.4 / 1; }
+.intro-page .hw-shot .shot-label {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #3E3A36;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 500;
+}
+.intro-page .hw-shot.lifestyle .shot-label {
+  background: rgba(62, 58, 54, 0.78);
+  color: #F5F1EA;
+}
+@media (max-width: 768px) {
+  .intro-page .hw-showcase { grid-template-columns: 1fr; }
+}
+
 .intro-page .hw-wrap {
   display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px;
   align-items: start; margin-top: 50px;
@@ -1224,6 +1266,11 @@
   font-size: 32px;
   color: #8B6F47;
   font-weight: 500;
+  overflow: hidden;
+  border: 2px solid rgba(139, 111, 71, 0.18);
+}
+.intro-page .team-avatar img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
 }
 .intro-page .team-card h4 {
   font-family: 'Noto Serif SC', serif;
