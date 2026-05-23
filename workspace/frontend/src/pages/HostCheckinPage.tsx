@@ -209,7 +209,7 @@ export default function HostCheckinPage() {
                 key={idx}
                 className={`relative h-[116px] rounded-card border-[1.5px] cursor-pointer flex flex-col items-center justify-center gap-[6px] transition-all duration-[180ms] overflow-hidden ${
                   photos[idx]
-                    ? 'border-accent-primary border-solid bg-[radial-gradient(circle_at_35%_30%,#f5d9b0_0%,#d6a877_50%,#8c5d36_100%)]'
+                    ? 'border-accent-primary border-solid bg-[#1a1a1a]'
                     : 'border-dashed border-[#8A847D] bg-[rgba(255,255,255,0.55)] hover:border-accent-primary hover:bg-accent-soft'
                 }`}
                 onClick={(e) => {
@@ -228,8 +228,15 @@ export default function HostCheckinPage() {
                 />
                 {photos[idx] ? (
                   <>
-                    <span className="flex w-8 h-8 rounded-full bg-[rgba(255,255,255,0.92)] items-center justify-center text-accent-primary shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    {/* 实际照片预览，铺满整个上传框 */}
+                    <img
+                      src={photos[idx]!}
+                      alt={`第 ${idx + 1} 张`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    {/* 顶部勾选标识，叠在照片上 */}
+                    <span className="absolute bottom-2 left-2 flex w-7 h-7 rounded-full bg-accent-primary text-white items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.25)] z-[2]">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12.5l4.5 4.5L19 7.5"/>
                       </svg>
                     </span>
@@ -240,7 +247,7 @@ export default function HostCheckinPage() {
                         e.stopPropagation();
                         handlePhotoRemove(idx);
                       }}
-                      className="absolute top-2 right-2 w-[26px] h-[26px] rounded-full bg-[rgba(0,0,0,0.45)] text-white flex items-center justify-center backdrop-blur-[4px]"
+                      className="absolute top-2 right-2 w-[26px] h-[26px] rounded-full bg-[rgba(0,0,0,0.55)] text-white flex items-center justify-center backdrop-blur-[4px] z-[2]"
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M6 6l12 12M18 6L6 18"/>
