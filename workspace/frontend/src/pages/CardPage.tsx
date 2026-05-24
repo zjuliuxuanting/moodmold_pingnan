@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPetByTagId, getUpdates } from '../utils/storage';
+import { getPetByTagIdOrDemo, getUpdates } from '../utils/storage';
 import type { Pet } from '../types';
 
 function BridgeSVG() {
@@ -76,9 +76,7 @@ export default function CardPage() {
   }, []);
 
   useEffect(() => {
-    if (!tagId) return;
-    const foundPet = getPetByTagId(tagId);
-    if (foundPet) setPet(foundPet);
+    setPet(getPetByTagIdOrDemo(tagId));
     const timer = setTimeout(() => setCardReady(true), 150);
     return () => clearTimeout(timer);
   }, [tagId]);

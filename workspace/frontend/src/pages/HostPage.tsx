@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getPets } from '../utils/storage'
+import { getDemoHostPets } from '../utils/storage'
 
 interface TaskItem {
   id: string
@@ -62,7 +62,8 @@ export default function HostPage() {
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
 
-  const pets = getPets()
+  // 用固定 demo 寄养清单（豆豆 + 小花），不受 HostRegister 误录数据影响
+  const pets = getDemoHostPets()
   const guestCount = pets.length
   const guestNames = pets.map((p) => p.name)
   const doneCount = tasks.filter((t) => t.done).length
@@ -125,18 +126,35 @@ export default function HostPage() {
                 多云
               </span>
             </div>
+            <button
+              type="button"
+              onClick={() => navigate('/host/month')}
+              className="mt-2 inline-flex items-center gap-1 h-7 px-3 rounded-pill bg-white/85 backdrop-blur-sm border border-accent-wood/30 text-accent-wood font-[family-name:var(--font-sans)] text-[12px] font-medium active:scale-95 transition-transform shadow-[0_2px_6px_rgba(139,111,71,0.12)]"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <path d="M16 2v4M8 2v4M3 10h18" />
+              </svg>
+              我的本月数据
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </button>
           </div>
-          <div
-            className="w-16 h-16 rounded-full border-2 border-white flex items-center justify-center text-white text-[22px] font-semibold tracking-[0.04em] shrink-0 cursor-pointer"
+          <button
+            type="button"
+            onClick={() => navigate('/host/month')}
+            className="w-16 h-16 rounded-full border-2 border-white flex items-center justify-center text-white text-[22px] font-semibold tracking-[0.04em] shrink-0 cursor-pointer active:scale-95 transition-transform"
             style={{
               background: 'linear-gradient(140deg, #C8A77F 0%, #8B6F47 100%)',
               boxShadow: '0 2px 10px rgba(62,58,54,0.12)',
               textShadow: '0 1px 2px rgba(0,0,0,0.15)',
               fontFamily: 'var(--font-sans)',
             }}
+            title="查看我的本月数据"
           >
             王
-          </div>
+          </button>
         </section>
 
         {/* Summary card · 100px */}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPetByTagId, getUpdates } from '../utils/storage';
+import { getPetByTagIdOrDemo, getUpdates } from '../utils/storage';
 import type { Pet, StatusUpdate } from '../types';
 import { toast, registerToastShow } from '../utils/toast';
 
@@ -373,9 +373,8 @@ export default function DiaryListPage() {
   }, [showToast]);
 
   useEffect(() => {
+    setPet(getPetByTagIdOrDemo(tagId));
     if (!tagId) return;
-    const foundPet = getPetByTagId(tagId);
-    if (foundPet) setPet(foundPet);
     const storedUpdates = getUpdates(tagId);
     setUpdates(storedUpdates);
     prevUpdateCount.current = storedUpdates.length;

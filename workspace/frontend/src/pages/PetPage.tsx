@@ -1,6 +1,6 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { getPetByTagId, getUpdates } from '../utils/storage';
+import { getPetByTagIdOrDemo, getUpdates } from '../utils/storage';
 import type { Pet, StatusUpdate } from '../types';
 
 function calcDays(checkinDate: string): number {
@@ -17,18 +17,13 @@ function formatTimestamp(iso: string): string {
 
 export default function PetPage() {
   const { tagId } = useParams<{ tagId: string }>();
-  const navigate = useNavigate();
-  const [pet, setPet] = useState<Pet | null | undefined>(undefined);
+  const [pet, setPet] = useState<Pet | undefined>(undefined);
   const [updates, setUpdates] = useState<StatusUpdate[]>([]);
 
   useEffect(() => {
-    if (!tagId) {
-      setPet(null);
-      return;
-    }
-    const found = getPetByTagId(tagId);
-    setPet(found ?? null);
-    setUpdates(getUpdates(tagId));
+    // 任何 tagId 都至少能拿到豆豆 demo 兜底
+    setPet(getPetByTagIdOrDemo(tagId));
+    if (tagId) setUpdates(getUpdates(tagId));
   }, [tagId]);
 
   const latestOverlay = useMemo(() => {
@@ -71,28 +66,6 @@ export default function PetPage() {
       <div className="min-h-screen bg-primary-bg flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-10 w-10 border-4 border-border-light border-t-accent-primary mb-6" />
         <p className="text-text-secondary text-sm">加载中...</p>
-      </div>
-    );
-  }
-
-  // not found
-  if (pet === null) {
-    return (
-      <div className="min-h-screen bg-primary-bg flex flex-col items-center justify-center px-6">
-        <div className="text-center max-w-sm">
-          <div className="text-6xl mb-6">🐾</div>
-          <h1 className="text-2xl font-serif text-text-primary mb-3">未找到宠物</h1>
-          <p className="text-text-secondary mb-8">
-            挂牌编号 <span className="text-text-primary font-mono">{tagId}</span> 尚未绑定任何宠物。
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/', { replace: true })}
-            className="px-8 h-[52px] flex items-center justify-center rounded-pill bg-accent-primary text-white font-medium text-sm active:scale-[0.98] transition-all"
-          >
-            返回首页
-          </button>
-        </div>
       </div>
     );
   }

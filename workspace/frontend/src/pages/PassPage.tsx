@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPetByTagId, getUpdates } from '../utils/storage';
+import { getPetByTagIdOrDemo } from '../utils/storage';
 import type { Pet } from '../types';
 
 type PassState = 'loading' | 'complete';
@@ -21,10 +21,8 @@ export default function PassPage() {
 
   useEffect(() => {
     if (!tagId) return;
-    const foundPet = getPetByTagId(tagId);
-    if (foundPet) {
-      setPet(foundPet);
-    }
+    // 任何 tagId 都至少能拿到豆豆 demo 兜底，保证扫码即看真照片
+    setPet(getPetByTagIdOrDemo(tagId));
     // auto transition after 4s
     const timer = setTimeout(() => setPassState('complete'), 4000);
     return () => clearTimeout(timer);

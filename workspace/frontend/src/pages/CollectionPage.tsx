@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPetByTagId } from '../utils/storage';
+import { getPetByTagIdOrDemo } from '../utils/storage';
 import type { Pet } from '../types';
 
 interface CollectionItem {
@@ -248,9 +248,7 @@ export default function CollectionPage() {
   }, []);
 
   useEffect(() => {
-    if (!tagId) return;
-    const foundPet = getPetByTagId(tagId);
-    if (foundPet) setPet(foundPet);
+    setPet(getPetByTagIdOrDemo(tagId));
   }, [tagId]);
 
   useEffect(() => {

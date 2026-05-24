@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPetByTagId } from '../utils/storage';
+import { getPetByTagIdOrDemo } from '../utils/storage';
 import type { Pet } from '../types';
 import { toast, registerToastShow } from '../utils/toast';
 
@@ -223,9 +223,7 @@ export default function DiaryDetailPage() {
   }, [showToast]);
 
   useEffect(() => {
-    if (!tagId) return;
-    const foundPet = getPetByTagId(tagId);
-    if (foundPet) setPet(foundPet);
+    setPet(getPetByTagIdOrDemo(tagId));
   }, [tagId]);
 
   useEffect(() => {
@@ -245,18 +243,53 @@ export default function DiaryDetailPage() {
   const petName = pet?.name || '豆豆';
   const dayNumber = parseInt(dayId || '3', 10) || 3;
 
-  const diaryContent = {
-    title: '带豆豆走了一遍万安廊桥，她在桥上停了三分钟',
-    body: `廊桥的木头被太阳晒得温温的。豆豆走在前面，爪子在木板上发出轻轻的嗒嗒声。走到桥心的时候，她忽然停下来，坐了下来，面向远处的山。
+  // 按 dayId 切换日记内容（与 DiaryListPage 的 3 条 mock 数据对齐）
+  const diaryContentByDay: Record<number, { title: string; body: string; date: string; time: string; heroSrc?: string }> = {
+    1: {
+      title: '有福在门口张望了很久，远远看见一团橘色的小影子',
+      date: '5月25日',
+      time: '20:30',
+      heroSrc: '/assets/diary/diary-day1-arrival.png',
+      body: `车门打开的时候，${petName}从笼子里探出半个脑袋，耳朵压得低低的。我蹲下来，用手指碰了碰她的鼻子——湿的，还热乎乎。
+
+她闻了我好一会儿，然后忽然伸出爪子拍了一下我的手背。
+
+我没动，等她先走了一步。门口的青砖被夕阳烤得暖暖的，她踩上去，又回头看了我一眼。
+
+那一眼，我就知道——这只城里来的小客人，今晚要住下来了。`,
+    },
+    2: {
+      title: `${petName}今天第一次主动蹭过来，我看了一眼她的眼睛`,
+      date: '5月26日',
+      time: '18:12',
+      heroSrc: '/assets/diary/diary-day2-explore.png',
+      body: `午觉睡醒的时候，${petName}不知道什么时候蹲在了我枕头旁边。我睁开眼，她的脸离我只有一巴掌远。
+
+她没有叫，就那样看着我，然后慢慢把脑袋歪过来，蹭了一下我的肩膀。
+
+那一刻，我忽然觉得——她不是来寄养的，她本来就是屏南的猫。
+
+院子里的栀子花开了，她跳上花坛闻了又闻，尾巴翘得高高的。`,
+    },
+    3: {
+      title: `带${petName}走了一遍万安廊桥，她在桥上停了三分钟`,
+      date: '5月27日',
+      time: '17:42',
+      heroSrc: '/assets/composites/shimmer-day3-main.png',
+      body: `廊桥的木头被太阳晒得温温的。${petName}走在前面，爪子在木板上发出轻轻的嗒嗒声。走到桥心的时候，她忽然停下来，坐了下来，面向远处的山。
 
 我安静地陪她坐了一会儿。风从桥下穿过，吹着她的毛往后飘。
 
 那一刻，我觉得她比我更懂这座桥。
 
-她好像在听水声，也好像在等谁。后来我才知道，每只猫都在这里等一个人——而豆豆等的是你。
+她好像在听水声，也好像在等谁。后来我才知道，每只猫都在这里等一个人——而${petName}等的是你。
 
 桥头的阿婆看到我们在桥上待了那么久，走过来递给我两片刚烤的红薯干。她说："这猫有灵性，她认得这座桥。"`,
+    },
   };
+
+  const diaryContent = diaryContentByDay[dayNumber] ?? diaryContentByDay[3];
+  const isShimmerDay = dayNumber === 3;
 
   const firstChar = diaryContent.body.charAt(0);
   const restBody = diaryContent.body.slice(1);
@@ -317,24 +350,30 @@ export default function DiaryDetailPage() {
 
       {/* Scrollable area */}
       <div className="flex-1 overflow-y-auto pb-[100px]" style={{ scrollbarWidth: 'none' }}>
-        {/* Shimmer tag */}
+        {/* Day tag — 仅 Day 3 显示「闪闪时刻」金标 */}
         <div className="px-4 mt-3">
-          <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-pill font-[family-name:var(--font-sans)] text-xs font-semibold text-accent-shimmer tracking-[0.03em]"
-            style={{ background: 'linear-gradient(135deg, #FFF4E6 0%, #FFE8C8 100%)', border: '1px solid rgba(196,145,92,0.25)' }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#C4915C">
-              <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-            </svg>
-            闪闪时刻 · Day{dayNumber} · 5月27日 17:42
-          </span>
+          {isShimmerDay ? (
+            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-pill font-[family-name:var(--font-sans)] text-xs font-semibold text-accent-shimmer tracking-[0.03em]"
+              style={{ background: 'linear-gradient(135deg, #FFF4E6 0%, #FFE8C8 100%)', border: '1px solid rgba(196,145,92,0.25)' }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#C4915C">
+                <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+              </svg>
+              闪闪时刻 · Day{dayNumber} · {diaryContent.date} {diaryContent.time}
+            </span>
+          ) : (
+            <span className="inline-flex items-center h-7 px-3 rounded-pill bg-accent-wood/90 text-white font-[family-name:var(--font-sans)] text-xs font-medium tracking-[0.03em]">
+              Day{dayNumber} · {diaryContent.date} {diaryContent.time}
+            </span>
+          )}
         </div>
 
-        {/* Hero Image */}
+        {/* Hero Image — 每天用对应的真实照片 */}
         <div className="mt-3 mx-4 rounded-[16px] overflow-hidden shadow-base">
-          {dayNumber === 3 ? (
+          {diaryContent.heroSrc ? (
             <img
-              src="/assets/composites/shimmer-day3-main.png"
-              alt="闪闪时刻"
+              src={diaryContent.heroSrc}
+              alt={`Day ${dayNumber}`}
               className="w-full h-auto block"
             />
           ) : (

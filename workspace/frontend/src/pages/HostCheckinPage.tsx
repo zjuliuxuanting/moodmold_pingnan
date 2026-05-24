@@ -1,6 +1,6 @@
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { getPetByTagId, addUpdate } from '../utils/storage';
+import { getPetByTagIdOrDemo, addUpdate } from '../utils/storage';
 import type { Pet } from '../types';
 
 const STATUS_OPTIONS = [
@@ -62,8 +62,7 @@ export default function HostCheckinPage() {
       setLoading(false);
       return;
     }
-    const found = getPetByTagId(petId);
-    setPet(found ?? null);
+    setPet(getPetByTagIdOrDemo(petId));
     setLoading(false);
   }, [petId]);
 
@@ -179,10 +178,15 @@ export default function HostCheckinPage() {
 
         {/* Pet info strip */}
         <section className="mx-6 mt-4 h-[72px] px-4 bg-accent-soft rounded-card flex items-center gap-[14px]">
-          <div className="w-[56px] h-[56px] rounded-full border-2 border-accent-wood shrink-0 relative overflow-hidden"
-            style={{ background: 'radial-gradient(circle at 36% 30%, #ffd9a8 0%, #f0b97a 45%, #c9885a 100%)' }}>
-            <div className="absolute w-[5px] h-[5px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] left-[32%]" />
-            <div className="absolute w-[5px] h-[5px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] right-[32%]" />
+          <div className="w-[56px] h-[56px] rounded-full border-2 border-accent-wood shrink-0 overflow-hidden bg-accent-cream">
+            {pet?.photo ? (
+              <img src={pet.photo} alt={petName} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full relative" style={{ background: 'radial-gradient(circle at 36% 30%, #ffd9a8 0%, #f0b97a 45%, #c9885a 100%)' }}>
+                <div className="absolute w-[5px] h-[5px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] left-[32%]" />
+                <div className="absolute w-[5px] h-[5px] rounded-full bg-[rgba(62,58,54,0.7)] top-[38%] right-[32%]" />
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[20px] font-semibold text-text-primary leading-[1.2] tracking-[0.02em]">

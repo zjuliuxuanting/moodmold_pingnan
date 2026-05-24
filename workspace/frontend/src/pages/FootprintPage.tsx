@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getPetByTagId } from '../utils/storage'
+import { getPetByTagIdOrDemo } from '../utils/storage'
 import type { Pet } from '../types'
 
 // 4 个站点（手绘地图上的圆点位置，单位 % 相对 SVG viewBox 300x180）
@@ -149,7 +149,7 @@ export default function FootprintPage() {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (tagId) setPet(getPetByTagId(tagId) ?? null)
+    setPet(getPetByTagIdOrDemo(tagId))
   }, [tagId])
 
   useEffect(() => {

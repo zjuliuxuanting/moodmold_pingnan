@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { getPetByTagId, getUpdates } from '../utils/storage';
+import { getPetByTagIdOrDemo, getUpdates } from '../utils/storage';
 import { overlayStickerOnPhoto } from '../utils/overlay';
 import { stickerSets, type StickerDef } from '../data/stickers';
 import type { Pet, StatusUpdate } from '../types';
@@ -24,13 +24,8 @@ export default function CheckinPage() {
   const [stickerSetId, setStickerSetId] = useState(stickerSets[0].id);
 
   useEffect(() => {
-    if (!tagId) {
-      setPet(null);
-      return;
-    }
-    const found = getPetByTagId(tagId);
-    setPet(found ?? null);
-    if (found) setUpdates(getUpdates(tagId));
+    setPet(getPetByTagIdOrDemo(tagId));
+    if (tagId) setUpdates(getUpdates(tagId));
   }, [tagId]);
 
   const currentSet = stickerSets.find((s) => s.id === stickerSetId) ?? stickerSets[0];
@@ -88,26 +83,8 @@ export default function CheckinPage() {
     );
   }
 
-  if (pet === null) {
-    return (
-      <div className="min-h-screen bg-primary-bg flex flex-col items-center justify-center px-6">
-        <div className="text-center max-w-sm">
-          <div className="text-6xl mb-6">🐾</div>
-          <h1 className="text-2xl font-serif text-text-primary mb-3">未找到宠物</h1>
-          <p className="text-text-secondary mb-8">
-            挂牌编号 <span className="text-text-primary font-mono">{tagId}</span> 尚未绑定任何宠物。
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/', { replace: true })}
-            className="px-8 h-[52px] flex items-center justify-center rounded-pill bg-accent-primary text-white font-medium text-sm active:scale-[0.98] transition-all"
-          >
-            返回首页
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // pet 现在通过 OrDemo 兜底，不会为 null，但保留类型保护
+  if (pet === null) return null;
 
   return (
     <div className="min-h-screen bg-primary-bg">
